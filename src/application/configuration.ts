@@ -43,6 +43,10 @@ const ConfigurationSchema = z.object({
      * We use this to sign the cookies.
      */
     cookiesSecret: z.string(),
+    /**
+     * Public base URL.
+     */
+    baseUrl: z.string(),
   }),
   isds: z.object({
     /**
@@ -82,6 +86,7 @@ const createConfiguration = (): Configuration => {
       host: env.HTTP_HOST,
       cookieName: "nkod-registration-manager",
       cookiesSecret: env.HTTP_COOKIE_SECRET,
+      baseUrl: env.HTTP_BASE_URL,
     },
     isds: {
       messagesPath: resolvePath(env.ISDS_ATTACHMENTS),

@@ -57,7 +57,7 @@ export async function createHttpServer(
   });
 
   server.addHook("onRequest", (request, reply, next) => {
-    const url = "https://skoda.projekty.ms.mff.cuni.cz/national-data-catalog" + request.originalUrl;
+    const url = configuration.http.baseUrl + request.originalUrl;
     const header = request.headers[authentication.httpHeaderName()];
     const data = authentication.createFromHeader(header);
     if (data === null) {
