@@ -89,8 +89,8 @@ const createConfiguration = (): Configuration => {
       baseUrl: env.HTTP_BASE_URL,
     },
     isds: {
-      messagesPath: resolvePath(env.ISDS_ATTACHMENTS),
-      attachmentsPath: resolvePath(env.ISDS_MESSAGES),
+      messagesPath: resolvePath(env.ISDS_MESSAGES),
+      attachmentsPath: resolvePath(env.ISDS_ATTACHMENTS),
     },
     storage: {
       path: resolvePath(env.STORAGE_PATH),
