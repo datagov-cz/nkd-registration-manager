@@ -1,27 +1,34 @@
 import N3 from "n3";
 
 import type { Node, BlankNode, Literal, NamedNode, Term } from "../rdf-model";
-import type { Collector } from "../rdf-parser";
+import type { RdfCollector, RdfReader } from "../rdf-reader";
 
-const parser = new N3.Parser({});
+export function createStringN3RdfReader(): RdfReader<string> {
+  return new StringN3RdfReader();
+}
 
-export async function parseN3<T>(
-  document: string,
-  consumer: Collector<T>,
-): Promise<T> {
-  return new Promise<T>((accept, reject) => {
-    const callback = createCallback(accept, reject, consumer);
-    parser.parse(document, callback);
-  });
+class StringN3RdfReader implements RdfReader<string> {
+
+  parse(
+    input: string,
+    collector: RdfCollector,
+  ): Promise<void> {
+    const parser = new N3.Parser({});
+    return new Promise((accept, reject) => {
+      const callback = createCallback(accept, reject, collector);
+      parser.parse(input, callback);
+    });
+  }
+
 }
 
 /**
- * @returns Callback that feeds all quads to the {@link consumer}.
+ * @returns Callback that feeds all quads to the {@link collector}.
  */
-function createCallback<T>(
-  accept: (value: T) => void,
+function createCallback(
+  accept: () => void,
   reject: (reason?: any) => void,
-  consumer: Collector<T>,
+  collector: RdfCollector,
 ) {
   return (error: Error, quad: N3.Quad) => {
     if (error !== null) {
@@ -29,13 +36,13 @@ function createCallback<T>(
       return;
     }
     if (error === null && quad === null) {
-      accept(consumer.result());
+      accept();
       return;
     }
     const subject = convertSubject(quad.subject);
     const predicate = quad.predicate.value;
     const object = convertObject(quad.object);
-    consumer.consume(subject, predicate, object);
+    collector.consume(subject, predicate, object);
   }
 }
 
@@ -83,27 +90,33 @@ function convertObject(value: N3.Quad_Object): Term | null {
   }
 }
 
-export async function parseN3Stream<T>(
-  document: ReadableStreamDefaultReader<Uint8Array>,
-  format: N3.BaseFormat,
-  consumer: Collector<T>,
-): Promise<T> {
-  return new Promise((accept, reject) => {
-    const parser = new N3StreamReader({ format }, consumer);
-    parser.parse(document)
-      .then(() => accept(consumer.result()))
-      .catch(error => reject(error));
-  });
+export function createStreamN3RdfReader(): RdfReader<Stream> {
+  return new StreamN3RdfReader();
 }
+
+class StreamN3RdfReader implements RdfReader<Stream> {
+
+  parse(input: Stream, collector: RdfCollector): Promise<void> {
+    return new Promise((accept, reject) => {
+      const parser = new N3StreamReader(collector);
+      parser.parse(input)
+        .then(() => accept())
+        .catch(error => reject(error));
+    });
+  }
+
+}
+
+type Stream = ReadableStreamDefaultReader<Uint8Array>;
 
 /**
  * Support for reading RDF stream.
  */
-class N3StreamReader<T> {
+class N3StreamReader implements RdfReader<Stream> {
 
   protected readonly parser: N3.Parser;
 
-  protected readonly consumer: Collector<T>;
+  protected readonly consumer: RdfCollector;
 
   protected readonly decoder = new TextDecoder("utf-8");
 
@@ -117,7 +130,7 @@ class N3StreamReader<T> {
    */
   protected onEnd?: () => void;
 
-  constructor(options: N3.ParserOptions, consumer: Collector<T>) {
+  constructor(consumer: RdfCollector, options?: N3.ParserOptions) {
     this.parser = new N3.Parser(options);
     this.consumer = consumer;
     this.initializeParser();

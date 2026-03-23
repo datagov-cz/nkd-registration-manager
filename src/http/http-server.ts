@@ -1,10 +1,13 @@
 import Fastify, {
-  type FastifyRequest,
+  FastifyReply,
+  FastifyRequest,
+  HookHandlerDoneFunction,
 } from "fastify";
 import fastifyCors from "@fastify/cors";
 import fastifyCookie from "@fastify/cookie";
 import fastifySession from "@fastify/session"
 import fastifyHelmet from "@fastify/helmet"
+import fastifyMultipart from "@fastify/multipart";
 
 import { logger } from "../application/logger";
 import { Configuration } from "../application/configuration";
@@ -34,6 +37,9 @@ export async function createHttpServer(
     global: true,
   });
 
+  // Multipart - https://github.com/fastify/fastify-multipart
+  server.register(fastifyMultipart);
+
   // Cookies - https://www.npmjs.com/package/@fastify/cookie
   server.register(fastifyCookie);
 
@@ -56,22 +62,12 @@ export async function createHttpServer(
     // }
   });
 
-  server.addHook("onRequest", (request, reply, next) => {
-    const url = configuration.http.baseUrl + request.originalUrl;
-    const header = request.headers[authentication.httpHeaderName()];
-    const data = authentication.createFromHeader(header);
-    if (data === null) {
-      reply.redirect("/caais/login?redirect-url=" + encodeURIComponent(url));
-      return;
-    }
-    request.user = data;
-    next();
-  });
+  server.addHook("onRequest", (request, reply, next) =>
+    mockedAuthenticationMiddleware(
+      configuration, authentication, request, reply, next));
 
-  // Initialize session object.
-  server.addHook("preHandler", (request, _reply, next) => {
-    console.log("preHandler");
-    initializeSession(request);
+  server.addHook("preHandler", (_request, _reply, next) => {
+    initializeSession();
     next();
   })
 
@@ -93,18 +89,53 @@ declare module "fastify" {
 
 }
 
-/**
- * This method is called for every request.
- */
-function initializeSession(request: FastifyRequest) {
-  request.session.authenticated = false;
+function authenticationMiddleware(
+  configuration: Configuration,
+  authentication: HttpAuthentication,
+  request: FastifyRequest,
+  reply: FastifyReply,
+  next: HookHandlerDoneFunction,
+) {
+  const url = configuration.http.baseUrl + request.originalUrl;
+  const header = request.headers[authentication.httpHeaderName()];
+  const data = authentication.createFromHeader(header);
+  if (data === null) {
+    reply.redirect("/caais/login?redirect-url=" + encodeURIComponent(url));
+    return;
+  }
+  request.user = data;
+  next();
+}
+
+function mockedAuthenticationMiddleware(
+  _configuration: Configuration,
+  _authentication: HttpAuthentication,
+  request: FastifyRequest,
+  _reply: FastifyReply,
+  next: HookHandlerDoneFunction,
+) {
+  request.user = {
+    login: "petr_skoda",
+    givenName: "Petr",
+    familyName: "Škoda",
+    isEditor: true,
+    entity: {
+      identifier: "70890692",
+      name: "Moravskoslezský kraj",
+    }
+  } as AuthenticationData;
+  next();
+}
+
+function initializeSession() {
+  // For now we do nothing here.
 }
 
 export function startServer(configuration: Configuration, server: HttpServer) {
   server.listen({
     port: configuration.http.port,
     host: configuration.http.host,
-  }, function (error) {
+  }, (error) => {
     if (error) {
       server.log.error(error);
       process.exit(1);

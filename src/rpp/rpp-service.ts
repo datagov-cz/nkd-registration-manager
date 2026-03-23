@@ -1,8 +1,10 @@
-import { logger } from "../application/";
-import { SparqlService } from "./sparql-service";
+import { logger } from "../application";
+import { SparqlService } from "../sparql";
 
-export function createRppService(endpoint: string): RppService {
-  return new SparqlRppService(endpoint);
+export function createRppService(
+  sparql: SparqlService, endpoint: string,
+): RppService {
+  return new SparqlRppService(sparql, endpoint);
 }
 
 export interface RppService {
@@ -20,9 +22,10 @@ class SparqlRppService implements RppService {
 
   readonly cache: Map<string, string | null> = new Map();
 
-  readonly sparql = new SparqlService();
+  readonly sparql;
 
-  constructor(endpoint: string) {
+  constructor(sparql: SparqlService, endpoint: string) {
+    this.sparql = sparql;
     this.endpoint = endpoint;
   }
 

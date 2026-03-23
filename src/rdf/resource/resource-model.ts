@@ -1,7 +1,7 @@
 import type { BlankNode, NamedNode, Term } from "../rdf-model";
 
 /**
- * Resource model is focused around RDF resources.
+ * A single object representation of a resource with all its properties.
  */
 export interface Resource {
 
@@ -11,4 +11,4 @@ export interface Resource {
 
 }
 
-export type ResourceDictionary = { [iri: string]: Resource };
+export type ResourceByIri = { [iri: string]: Resource };

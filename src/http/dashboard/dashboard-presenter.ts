@@ -1,15 +1,15 @@
 import { type FastifyReply, type FastifyRequest } from "fastify";
 import { renderDashboardViewHtml } from "./dashboard-view-html";
 import { type DashboardState } from "./dashboard-model";
-import { IsdsRepository } from "../../registration/isds-repository";
+import { RegistrationRepository } from "../../registration";
 
 export function handleDashboardGet(
-  repository: IsdsRepository,
+  repository: RegistrationRepository,
   request: FastifyRequest,
   response: FastifyReply,
 ) {
   const user = request.user;
-  const messages = repository.listMessages(user.entity.identifier);
+  const messages = repository.listRegistrations(user.entity.identifier);
 
   // Create state ...
   const state: DashboardState = {
@@ -20,16 +20,11 @@ export function handleDashboardGet(
     organization: {
       name: user.entity.name,
     },
-    catalogs: [],
-    catalogCreateUrl: null,
-    datasets: [],
-    datasetCreateUrl: null,
     messages: messages.map(message => ({
-      identifier: message.messageIdentifier,
-      label: message.messageLabel ?? "",
-      type: String(message.type),
-      iri: message.iri,
-      payload: message.attachment,
+      identifier: message.identifier,
+      label: message.label["cs"],
+      type: message.type,
+      createdAt: message.createdAt,
     })),
   }
 
@@ -38,4 +33,28 @@ export function handleDashboardGet(
     .type("text/html")
     // .header("Content-Security-Policy", "script-src 'self' https://data.gov.cz/;")
     .send(renderDashboardViewHtml(state));
+}
+
+export async function handleDashboardPost(
+  repository: RegistrationRepository,
+  request: FastifyRequest,
+  response: FastifyReply,
+) {
+  const user = request.user;
+
+  //
+
+  const file = await request.file();
+  if (file === undefined) {
+    response.code(400).send();
+    return;
+  }
+  const buffer: Buffer<ArrayBufferLike> = await file.toBuffer();
+  const attachment = buffer.toString("utf-8");
+
+  await repository.createRegistration(
+    user.entity.identifier, user.login, attachment);
+
+  response
+    .redirect("/");
 }

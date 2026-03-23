@@ -66,7 +66,9 @@ class DefaultHttpAuthentication implements HttpAuthentication {
     }
 
     try {
-      const { user, entity } = JSON.parse(value);
+      const payload = value.split(".")[1];
+      // TODO Add JWT validation.
+      const { user, entity } = JSON.parse(Buffer.from(payload, "base64url").toString("utf-8"));
       if (user === undefined || entity === undefined) {
         return null;
       }

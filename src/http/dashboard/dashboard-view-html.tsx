@@ -15,15 +15,23 @@ function HomeView({ state }: { state: DashboardState }) {
       organization={state.organization}
     >
       <section>
-        <h2>Zprávy z ISDS</h2>
+        <h2>Registrační záznamy</h2>
         {messages.map(item => (
           <li>
-            [{item.type}] {item.identifier} : {item.label} <br/>
-            <code>
-              {JSON.stringify(item.payload, null, 2)}
-            </code>
+            {item.label} <br/>
+            Identifikátor záznamu: {item.identifier} <br/>
+            Záznam vytvořen: {item.createdAt.toISOString()} <br/>
+            Druh záznamu: {item.type}
           </li>
         ))}
+      </section>
+      <section>
+        <h2>Vložení nového záznamu</h2>
+        <form method="post" enctype="multipart/form-data">
+          <label for="file">Soubor záznamu:</label>
+          <input type="file" id="file" name="file" />
+          <button type="submit">Vložit záznam</button>
+        </form>
       </section>
     </HtmlLayout>
   )

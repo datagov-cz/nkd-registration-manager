@@ -2,22 +2,24 @@
 // but it is better then nothing.
 import jsonld from "jsonld";
 
-import type { Node, Term, NamedNode } from "./rdf-model";
-import type { Collector } from "./rdf-parser";
+import type { Node, Term, NamedNode } from "../rdf-model";
+import type { RdfCollector, RdfReader } from "../rdf-reader";
 
-interface RdfQuad {
-
-  subject: Node;
-
-  predicate: NamedNode;
-
-  object: Term;
-
-  graph: Node;
-
+export function createJsonLdReader(): RdfReader<object | []> {
+  return new JsonLdReader();
 }
 
-const documentCache: { [url: string]: any } = {};
+class JsonLdReader implements RdfReader<object | []> {
+
+  async parse(input: object | [], collector: RdfCollector): Promise<void> {
+    const options = { documentLoader };
+    const rdf = (await jsonld.toRDF(input, options)) as RdfQuad[];
+    for (const { subject, predicate, object } of rdf) {
+      collector.consume(subject, predicate.value, object);
+    }
+  }
+
+}
 
 const documentLoader = async (url: string) => {
   if (documentCache[url] === undefined) {
@@ -28,16 +30,19 @@ const documentLoader = async (url: string) => {
   return documentCache[url];
 }
 
-export async function parseJsonLd<T>(
-  document: object | [],
-  consumer: Collector<T>,
-): Promise<T> {
-  const options = {
-    documentLoader,
-  };
-  const rdf = (await jsonld.toRDF(document, options)) as RdfQuad[];
-  for (const { subject, predicate, object } of rdf) {
-    consumer.consume(subject, predicate.value, object);
-  }
-  return consumer.result();
+const documentCache: { [url: string]: any } = {};
+
+/**
+ * Custom type definition as '@types/jsonld' is not really working.
+ */
+interface RdfQuad {
+
+  subject: Node;
+
+  predicate: NamedNode;
+
+  object: Term;
+
+  graph: Node;
+
 }

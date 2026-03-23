@@ -1,5 +1,21 @@
 
-export class SparqlService {
+export function createSparqlService(): SparqlService {
+  return new DefaultSparqlService();
+}
+
+export interface SparqlService {
+
+  executeSelect(endpoint: string, query: string): Promise<SparqlSelectResult[]>;
+
+}
+
+type SparqlSelectResult = {
+  [column: string]: {
+    value: string,
+  },
+};
+
+class DefaultSparqlService {
 
   async executeSelect(
     endpoint: string, query: string,
@@ -17,9 +33,3 @@ export class SparqlService {
   }
 
 }
-
-type SparqlSelectResult = {
-  [column: string]: {
-    value: string,
-  },
-};

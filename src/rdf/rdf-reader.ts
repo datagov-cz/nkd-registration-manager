@@ -1,33 +1,40 @@
-import { Node, LanguageString } from "./rdf-model";
+import type { Node, Term, Statement } from "./rdf-model";
 
-export interface RdfReader {
+export interface RdfReader<InputType> {
 
-  iri: (iri: string | null) => RdfEntityReader | null;
-
-  /**
-   * @returns List of entities with at least one of the given types.
-   */
-  anyOfType: (types: string[]) => RdfEntityReader[];
-
-  entities: () => RdfEntityReader[];
+  parse(
+    input: InputType,
+    collector: RdfCollector,
+  ): Promise<void>;
 
 }
 
-export interface RdfEntityReader {
+export interface RdfCollector {
 
-  identifier: () => Node;
+  consume(subject: Node | null, predicate: string, object: Term | null): void;
 
-  firstIri: (predicate: string) => string | null;
+}
 
-  firstAsString: (predicate: string) => string | null;
+/**
+ * Collect RDF statements into an array.
+ */
+export function collectToArray(): CollectToArray {
+  const statements: Statement[] = [];
+  return {
+    consume(subject, predicate, object) {
+      if (subject === null || object === null) {
+        return;
+      }
+      statements.push([subject, predicate, object]);
+    },
+    result() {
+      return statements;
+    }
+  };
+}
 
-  firstDate: (predicate: string) => Date | null;
+interface CollectToArray extends RdfCollector {
 
-  firstEntity(predicate: string): RdfEntityReader | null;
-
-  /**
-   * @returns Aggregation of language strings into a single object.
-   */
-  languageString: (predicate: string) => LanguageString;
+  result(): Statement[];
 
 }

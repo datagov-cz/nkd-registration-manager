@@ -10,7 +10,8 @@ import { handleCatalogDeleteGet } from "./catalog-delete";
 import { handleDatasetCreateGet } from "./dataset-create";
 import { handleDatasetUpdateGet } from "./dataset-update";
 import { handleDatasetDeleteGet } from "./dataset-delete";
-import { IsdsRepository } from "../registration/isds-repository";
+import { handleDashboardPost } from "./dashboard/dashboard-presenter";
+import { RegistrationRepository } from "../registration";
 
 const routes = Object.freeze({
   CatalogCreate: "/formulář/registrace-lokálního-katalogu",
@@ -24,7 +25,7 @@ const routes = Object.freeze({
 export function registerRoutes(
   server: HttpServer,
   forms: Forms,
-  repository: IsdsRepository,
+  repository: RegistrationRepository,
 ) {
   registerAssetsRoutes(server);
 
@@ -32,6 +33,12 @@ export function registerRoutes(
     method: "GET",
     url: "/",
     handler: (req, res) => handleDashboardGet(repository, req, res),
+  });
+
+  server.route({
+    method: "POST",
+    url: "/",
+    handler: (req, res) => handleDashboardPost(repository, req, res),
   });
 
   return;

@@ -58,11 +58,15 @@ const ConfigurationSchema = z.object({
      */
     attachmentsPath: z.string(),
   }),
-  storage: z.object({
+  repository: z.object({
     /**
-     * Path to storage directory.
+     * Path to directory with repository messages.
      */
-    path: z.string(),
+    messagesPath: z.string(),
+    /**
+     * Path to directory with repository attachments.
+     */
+    attachmentsPath: z.string(),
   }),
   rpp: z.object({
     /**
@@ -92,8 +96,9 @@ const createConfiguration = (): Configuration => {
       messagesPath: resolvePath(env.ISDS_MESSAGES),
       attachmentsPath: resolvePath(env.ISDS_ATTACHMENTS),
     },
-    storage: {
-      path: resolvePath(env.STORAGE_PATH),
+    repository: {
+      messagesPath: resolvePath(env.REPOSITORY_MESSAGES),
+      attachmentsPath: resolvePath(env.REPOSITORY_ATTACHMENTS),
     },
     rpp: {
       sparql: "https://rpp-opendata.egon.gov.cz/odrpp/sparql",

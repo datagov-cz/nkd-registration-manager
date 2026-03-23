@@ -1,5 +1,11 @@
-import { Resource, ResourceDictionary } from "./resource-model";
+import { Resource, ResourceByIri } from "./resource-model";
 import { Node } from "../rdf-model";
+
+export function createResourceReader(
+  record: ResourceByIri,
+): ResourceReader {
+  return new DefaultResourceReader(record);
+}
 
 export interface ResourceReader {
 
@@ -15,7 +21,11 @@ export interface SubjectReader {
 
   date(predicate: string): Date | null;
 
+  languageString(predicate: string): LanguageString | null;
+
 }
+
+type LanguageString = { [language: string]: string };
 
 const RDFS = {
   type: "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
@@ -23,14 +33,14 @@ const RDFS = {
 
 class DefaultResourceReader implements ResourceReader {
 
-  private readonly record: ResourceDictionary;
+  private readonly resources: ResourceByIri;
 
-  constructor(record: ResourceDictionary) {
-    this.record = record;
+  constructor(record: ResourceByIri) {
+    this.resources = record;
   }
 
   firstOfType(type: string) {
-    for (const resource of Object.values(this.record)) {
+    for (const resource of Object.values(this.resources)) {
       const types = resource.properties[RDFS.type] ?? [];
       if (types.find(item => item.value === type) !== undefined) {
         return new DefaultSubjectReader(resource);
@@ -66,10 +76,19 @@ class DefaultSubjectReader implements SubjectReader {
     return new Date(value);
   }
 
-}
+  languageString(predicate: string): LanguageString | null {
+    const values = this.resource.properties[predicate];
+    const result : LanguageString = {};
+    for (const value of values) {
+      if ( value.termType !== "Literal") {
+        continue;
+      }
+      result[value.language ?? ""] = value.value;
+    }
+    if (Object.keys(result).length === 0 ) {
+      return null;
+    }
+    return result;
+  }
 
-export function createResourceReader(
-  record: ResourceDictionary,
-): ResourceReader {
-  return new DefaultResourceReader(record);
 }

@@ -1,14 +1,14 @@
-import type { Resource, ResourceDictionary } from "./resource-model";
+import type { Resource, ResourceByIri } from "./resource-model";
 import type { Node } from "../rdf-model";
-import type { Collector } from "../rdf-parser";
+import type { RdfCollector } from "../rdf-reader";
 
 /**
  * Collect statements into {@link Resource}s.
  */
-export function createResourceCollector(): Collector<ResourceDictionary> {
+export function createResourceCollector(): ResourceCollector {
   const resourceMap: { [iri: string]: Resource } = {};
   return {
-    consume: function (subject, predicate, object): void {
+    consume(subject, predicate, object) {
       if (subject === null || object === null) {
         return;
       }
@@ -20,7 +20,7 @@ export function createResourceCollector(): Collector<ResourceDictionary> {
       }
       property.push(object);
     },
-    result: function (): ResourceDictionary {
+    result(): ResourceByIri {
       return resourceMap;
     }
   };
@@ -46,4 +46,10 @@ function getOrCreateResource(
     resourceMap[identifier] = resource;
   }
   return resource;
+}
+
+export interface ResourceCollector extends RdfCollector {
+
+  result(): ResourceByIri;
+
 }

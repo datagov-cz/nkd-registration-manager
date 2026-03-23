@@ -1,8 +1,8 @@
 import { describe, test, expect } from "vitest";
-import { parseN3 } from "./rdf-parser-n3";
-import { collectToArray } from "../rdf-parser";
+import { createStringN3RdfReader } from "./rdf-parser-n3";
+import { collectToArray } from "../rdf-reader";
 
-describe("parseN3", () => {
+describe("createStringN3RdfReader", () => {
 
   /**
    * Parse simple turtle file fragment.
@@ -31,7 +31,8 @@ describe("parseN3", () => {
     //
 
     const collector = collectToArray();
-    await parseN3(input, collector);
+    const reader = createStringN3RdfReader();
+    await reader.parse(input, collector);
     const actual = collector.result();
 
     // We just check the number of statements.
