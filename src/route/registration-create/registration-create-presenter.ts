@@ -34,7 +34,8 @@ export async function handleRegistrationPost(
   await repository.createRegistration(
     user.entity.identifier, user.login, attachment);
 
-  response.redirect(route.dashboard());
+  // We need to encode the value for a redirect.
+  response.redirect(encodeURI(route.dashboard()));
 }
 
 async function readMultipart(
