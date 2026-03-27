@@ -10,18 +10,37 @@ export async function handleRegistrationPost(
   response: FastifyReply,
 ) {
   const user = request.user;
+  const contentType = request.headers["content-type"];
 
-  const file = await request.file();
-  if (file === undefined) {
+  let attachment: string | null = null;
+  if (contentType === undefined) {
+    response.code(HttpStatusCode.BadRequest).send();
+    return;
+  } else if (contentType === "application/json") {
+    // Fastify parse JSON by default.
+    // We need to get the string back.
+    attachment = JSON.stringify(request.body);
+  } else if (contentType.startsWith("multipart/form-data")) {
+    attachment = await readMultipart(request);
+  }
+
+  if (attachment === null) {
     response.code(HttpStatusCode.BadRequest).send();
     return;
   }
-
-  const buffer: Buffer<ArrayBufferLike> = await file.toBuffer();
-  const attachment = buffer.toString("utf-8");
 
   await repository.createRegistration(
     user.entity.identifier, user.login, attachment);
 
   response.redirect(route.dashboard());
+}
+
+async function readMultipart(
+  request: FastifyRequest,
+): Promise<string | null> {
+  const file = await request.file();
+  if (file === undefined) {
+    return null;
+  }
+  return (await file.toBuffer()).toString("utf-8");
 }
