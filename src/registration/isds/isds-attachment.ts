@@ -32,10 +32,6 @@ export async function parseIsdsAttachment(
   const catalog = reader.firstOfType(VOCABULARY.Catalog);
   if (catalog !== null) {
     const status = catalog.value(VOCABULARY.status);
-    const identifier = catalog.value(VOCABULARY.endpointURL);
-    if (identifier === null) {
-      return null;
-    }
     if (status === VOCABULARY.Withdrawn) {
       return parseWithdrawCatalog(catalog);
     } else {

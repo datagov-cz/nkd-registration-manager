@@ -102,7 +102,7 @@ class DefaultDiskRepository implements DiskRepository {
   ): Promise<RegistrationItem> {
     const attachment = await parseIsdsAttachment(attachmentContent);
     if (attachment === null) {
-      throw new Error("Invalid attachment.");
+      throw new Error("Failed to read an attachment.");
     }
     //
     const identifier = this.createIdentifier();
