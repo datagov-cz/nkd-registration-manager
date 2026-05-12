@@ -1,5 +1,5 @@
-FROM node:21.1.0-bullseye
-
+FROM node:24.15.0-slim
+ENV NODE_ENV=production
 WORKDIR /opt/nkd-registration-manager/
 COPY ./package*.json ./
 RUN npm ci

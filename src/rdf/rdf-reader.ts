@@ -1,18 +1,14 @@
 import type { Node, Term, Statement } from "./rdf-model";
 
 export interface RdfReader<InputType> {
-
-  parse(
-    input: InputType,
-    collector: RdfCollector,
-  ): Promise<void>;
-
+  /**
+   * @throws
+   */
+  parse(input: InputType, collector: RdfCollector): Promise<void>;
 }
 
 export interface RdfCollector {
-
   consume(subject: Node | null, predicate: string, object: Term | null): void;
-
 }
 
 /**
@@ -29,12 +25,10 @@ export function collectToArray(): CollectToArray {
     },
     result() {
       return statements;
-    }
+    },
   };
 }
 
 interface CollectToArray extends RdfCollector {
-
   result(): Statement[];
-
 }

@@ -10,7 +10,6 @@ export function createJsonLdReader(): RdfReader<object | []> {
 }
 
 class JsonLdReader implements RdfReader<object | []> {
-
   async parse(input: object | [], collector: RdfCollector): Promise<void> {
     const options = { documentLoader };
     const rdf = (await jsonld.toRDF(input, options)) as RdfQuad[];
@@ -18,7 +17,6 @@ class JsonLdReader implements RdfReader<object | []> {
       collector.consume(subject, predicate.value, object);
     }
   }
-
 }
 
 const documentLoader = async (url: string) => {
@@ -28,7 +26,7 @@ const documentLoader = async (url: string) => {
     documentCache[url] = await loader(encodeURI(url));
   }
   return documentCache[url];
-}
+};
 
 const documentCache: { [url: string]: any } = {};
 
@@ -36,7 +34,6 @@ const documentCache: { [url: string]: any } = {};
  * Custom type definition as '@types/jsonld' is not really working.
  */
 interface RdfQuad {
-
   subject: Node;
 
   predicate: NamedNode;
@@ -44,5 +41,4 @@ interface RdfQuad {
   object: Term;
 
   graph: Node;
-
 }

@@ -17,8 +17,5 @@ export function handleUnauthorized(
     branding: createHeaderBrandingState(route, user),
   };
 
-  response
-    .code(200)
-    .type("text/html")
-    .send(renderUnauthorizedViewHtml(state));
+  response.code(200).type("text/html").send(renderUnauthorizedViewHtml(state));
 }

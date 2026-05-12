@@ -8,18 +8,13 @@ export function createStringN3RdfReader(): RdfReader<string> {
 }
 
 class StringN3RdfReader implements RdfReader<string> {
-
-  parse(
-    input: string,
-    collector: RdfCollector,
-  ): Promise<void> {
+  parse(input: string, collector: RdfCollector): Promise<void> {
     const parser = new N3.Parser({});
     return new Promise((accept, reject) => {
       const callback = createCallback(accept, reject, collector);
       parser.parse(input, callback);
     });
   }
-
 }
 
 /**
@@ -43,7 +38,7 @@ function createCallback(
     const predicate = quad.predicate.value;
     const object = convertObject(quad.object);
     collector.consume(subject, predicate, object);
-  }
+  };
 }
 
 function convertSubject(value: N3.Quad_Subject): Node | null {
@@ -95,16 +90,15 @@ export function createStreamN3RdfReader(): RdfReader<Stream> {
 }
 
 class StreamN3RdfReader implements RdfReader<Stream> {
-
   parse(input: Stream, collector: RdfCollector): Promise<void> {
     return new Promise((accept, reject) => {
       const parser = new N3StreamReader(collector);
-      parser.parse(input)
+      parser
+        .parse(input)
         .then(() => accept())
-        .catch(error => reject(error));
+        .catch((error) => reject(error));
     });
   }
-
 }
 
 type Stream = ReadableStreamDefaultReader<Uint8Array>;
@@ -113,7 +107,6 @@ type Stream = ReadableStreamDefaultReader<Uint8Array>;
  * Support for reading RDF stream.
  */
 class N3StreamReader implements RdfReader<Stream> {
-
   protected readonly parser: N3.Parser;
 
   protected readonly consumer: RdfCollector;
@@ -185,5 +178,4 @@ class N3StreamReader implements RdfReader<Stream> {
     }
     this.onEnd?.();
   }
-
 }

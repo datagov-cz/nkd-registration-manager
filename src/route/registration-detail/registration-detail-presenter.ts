@@ -4,7 +4,10 @@ import { RegistrationService } from "../../registration";
 import { HttpStatusCode } from "../../http";
 import { RouteService } from "../route-service";
 import { renderRegistrationDetailGetViewHtml } from "./registration-detail-view-html";
-import { createHeaderBrandingState, createHeaderNavigationState } from "../../components";
+import {
+  createHeaderBrandingState,
+  createHeaderNavigationState,
+} from "../../components";
 
 export async function handleRegistrationDetailGet(
   repository: RegistrationService,
@@ -15,7 +18,9 @@ export async function handleRegistrationDetailGet(
   const user = request.user;
   const query = request.query as any;
   const registration = await repository.readRegistration(
-    user.entity.identifier, query["identifikátor"]);
+    user.entity.identifier,
+    query["identifikátor"],
+  );
 
   if (registration === null) {
     response.code(HttpStatusCode.NotFound).send();

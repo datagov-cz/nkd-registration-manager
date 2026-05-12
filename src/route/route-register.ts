@@ -8,7 +8,10 @@ import { RouteService } from "./route-service";
 import { Configuration } from "../application";
 import { handleRegistrationListGet } from "./registration-list";
 import { handleRegistrationDetailGet } from "./registration-detail";
-import { handleCreateRegistrationGet, handleCreateRegistrationPost } from "./create-registration";
+import {
+  handleCreateRegistrationGet,
+  handleCreateRegistrationPost,
+} from "./create-registration";
 import { handleUnauthorized } from "./unauthorized";
 import { FastifyReply, FastifyRequest } from "fastify";
 
@@ -31,22 +34,25 @@ export function registerRoutes(
   server.route({
     method: "GET",
     url: route.listRegistrationInternal(),
-    handler: checkRole(route, (req, res) => handleRegistrationListGet(
-      repository, route, req, res)),
+    handler: checkRole(route, (req, res) =>
+      handleRegistrationListGet(repository, route, req, res),
+    ),
   });
 
   server.route({
     method: "GET",
     url: route.registrationDetailInternal(),
-    handler: checkRole(route, (req, res) => handleRegistrationDetailGet(
-      repository, route, req, res)),
+    handler: checkRole(route, (req, res) =>
+      handleRegistrationDetailGet(repository, route, req, res),
+    ),
   });
 
   server.route({
     method: "GET",
     url: route.createRegistrationInternal(),
-    handler: checkRole(route, (req, res) => handleCreateRegistrationGet(
-      route, req, res)),
+    handler: checkRole(route, (req, res) =>
+      handleCreateRegistrationGet(route, req, res),
+    ),
   });
 
   // We register as a plugin.
@@ -54,17 +60,16 @@ export function registerRoutes(
   // Otherwise we would get a warning message:
   // @fastify/reply-from might not behave as expected when used with @fastify/multipart
   server.register((fastify) => {
-
     // Multipart - https://github.com/fastify/fastify-multipart
     fastify.register(fastifyMultipart);
 
     fastify.route({
       method: "POST",
       url: route.createRegistrationInternal(),
-      handler: checkRole(route, (req, res) => handleCreateRegistrationPost(
-        repository, route, req, res)),
+      handler: checkRole(route, (req, res) =>
+        handleCreateRegistrationPost(repository, route, req, res),
+      ),
     });
-
   });
 
   server.register(fastifyProxy, {
@@ -74,34 +79,27 @@ export function registerRoutes(
     preRewrite(url) {
       // We get the forms ASCII encoded.
       return url.replace("/formul%C3%A1%C5%99/", "");
-    }
+    },
   });
-
 }
 
 function checkRole(
   route: RouteService,
-  handler: (
-    request: FastifyRequest,
-    reply: FastifyReply,
-  ) => void,
+  handler: (request: FastifyRequest, reply: FastifyReply) => void,
 ) {
-  return (
-    request: FastifyRequest,
-    reply: FastifyReply,
-  ) => {
+  return (request: FastifyRequest, reply: FastifyReply) => {
     if (request.user.isAuthorized) {
       handler(request, reply);
     } else {
       handleUnauthorized(route, request, reply);
     }
-  }
+  };
 }
 
 function registerAssetsRoutes(server: HttpServer) {
   server.register(fastifyStatic, {
     root: new URL("../../public/assets/", import.meta.url),
     prefix: "/assets/",
-    decorateReply: false
+    decorateReply: false,
   });
 }

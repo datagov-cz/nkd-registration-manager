@@ -3,10 +3,7 @@
  */
 import type { IncomingMessage, Server, ServerResponse } from "node:http";
 
-import {
-  type FastifyInstance,
-  type FastifyTypeProviderDefault,
-} from "fastify";
+import { type FastifyInstance, type FastifyTypeProviderDefault } from "fastify";
 import { Logger } from "pino";
 
 /**
@@ -34,4 +31,5 @@ export type HttpServer = FastifyInstance<
   IncomingMessage,
   ServerResponse<IncomingMessage>,
   Logger,
-  FastifyTypeProviderDefault>;
+  FastifyTypeProviderDefault
+>;

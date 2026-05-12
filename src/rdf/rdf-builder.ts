@@ -5,23 +5,11 @@ export function createStatementRdfBuilder(): RdfBuilder<Statement[]> {
 }
 
 export interface RdfBuilder<ResultType> {
+  addType(subject: string, type: string): this;
 
-  addType(
-    subject: string,
-    type: string,
-  ): this;
+  addIris(subject: string, predicate: string, iris: string[]): this;
 
-  addIris(
-    subject: string,
-    predicate: string,
-    iris: string[],
-  ): this;
-
-  addIri(
-    subject: string,
-    predicate: string,
-    iri: string | null,
-  ): this;
+  addIri(subject: string, predicate: string, iri: string | null): this;
 
   addLanguageString(
     subject: string,
@@ -36,11 +24,9 @@ export interface RdfBuilder<ResultType> {
   ): this;
 
   build(): ResultType;
-
 }
 
 class DefaultRdfBuilder implements RdfBuilder<Statement[]> {
-
   readonly statement: Statement[] = [];
 
   addType(subject: string, type: string): this {
@@ -69,7 +55,9 @@ class DefaultRdfBuilder implements RdfBuilder<Statement[]> {
   }
 
   addLanguageString(
-    subject: string, predicate: string, string: LanguageString | null,
+    subject: string,
+    predicate: string,
+    string: LanguageString | null,
   ): this {
     if (string === null) {
       return this;
@@ -82,14 +70,15 @@ class DefaultRdfBuilder implements RdfBuilder<Statement[]> {
           termType: "Literal",
           value,
           language,
-        } as Literal
-      ])
+        } as Literal,
+      ]);
     }
     return this;
   }
 
   addLiteral(
-    subject: string, predicate: string,
+    subject: string,
+    predicate: string,
     literal: string | boolean | number | null,
   ): this {
     if (literal === null) {
@@ -102,7 +91,7 @@ class DefaultRdfBuilder implements RdfBuilder<Statement[]> {
         {
           termType: "Literal",
           value: String(literal),
-          datatype: this.iri(XSD.boolean)
+          datatype: this.iri(XSD.boolean),
         } as Literal,
       ]);
     } else if (typeof literal === "string") {
@@ -112,7 +101,7 @@ class DefaultRdfBuilder implements RdfBuilder<Statement[]> {
         {
           termType: "Literal",
           value: String(literal),
-          datatype: this.iri(XSD.string)
+          datatype: this.iri(XSD.string),
         } as Literal,
       ]);
     } else if (Number.isInteger(literal)) {
@@ -122,7 +111,7 @@ class DefaultRdfBuilder implements RdfBuilder<Statement[]> {
         {
           termType: "Literal",
           value: String(literal),
-          datatype: this.iri(XSD.integer)
+          datatype: this.iri(XSD.integer),
         } as Literal,
       ]);
     } else if (typeof (literal as any).toISOString === "function") {
@@ -132,11 +121,11 @@ class DefaultRdfBuilder implements RdfBuilder<Statement[]> {
         {
           termType: "Literal",
           value: (literal as any).toISOString(),
-          datatype: this.iri(XSD.date)
+          datatype: this.iri(XSD.date),
         } as Literal,
       ]);
     } else {
-      throw new Error("Unsupported operation exception.")
+      throw new Error("Unsupported operation exception.");
     }
     return this;
   }
@@ -144,7 +133,6 @@ class DefaultRdfBuilder implements RdfBuilder<Statement[]> {
   build(): Statement[] {
     return this.statement;
   }
-
 }
 
 const RDFS_PREFIX = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
@@ -156,9 +144,9 @@ const RDFS = {
 const XSD_PREFIX = "http://www.w3.org/2001/XMLSchema#";
 
 const XSD = {
-  "boolean": XSD_PREFIX + "boolean",
-  "integer": XSD_PREFIX + "integer",
-  "double": XSD_PREFIX + "double",
-  "string": XSD_PREFIX + "string",
-  "date": XSD_PREFIX + "date",
+  boolean: XSD_PREFIX + "boolean",
+  integer: XSD_PREFIX + "integer",
+  double: XSD_PREFIX + "double",
+  string: XSD_PREFIX + "string",
+  date: XSD_PREFIX + "date",
 };

@@ -4,7 +4,6 @@ import { createIsdsRepository } from "./isds-repository";
 import { RppService } from "../../rpp";
 
 describe("createIsdsRepository", () => {
-
   const rppService: RppService = {
     databoxToOrganization(databox) {
       if (databox === "yukd8p7") {
@@ -14,7 +13,7 @@ describe("createIsdsRepository", () => {
     },
   };
 
-  it("Implementation test I.", async () => {
+  it("Default implementation test.", async () => {
     const fileSystem = mockFileSystemService({
       "/messages/register-dataset-1000307675.ttl": `
 @prefix nkod: <https://data.gov.cz/slovník/nkod/> .
@@ -59,40 +58,42 @@ describe("createIsdsRepository", () => {
     "en": "Road Vehicle Register - Vehicle Technical Specifications"
   }
 }
-      `
+      `,
     });
 
     const repository = createIsdsRepository(
-      fileSystem, rppService, "/messages", "/attachments");
+      fileSystem,
+      rppService,
+      "/messages",
+      "/attachments",
+    );
 
     await repository.synchronize();
 
-    const registrations = repository.listRegistrations("17651921")
+    const registrations = repository.listRegistrations("17651921");
 
     expect(registrations).toStrictEqual([
       {
         type: "create-dataset",
         source: "isds",
         createdAt: new Date("2022-02-08T10:33:55.810Z"),
-        identifier: "isds-1000307675",
+        identifier: "1000307675",
         organization: "17651921",
         attachmentPath: "/attachments/1000307675-nkod-registrace.jsonld.txt",
-        label: { cs: "Přístupy k agendám CzechPOINT - 2007" }
+        label: { cs: "Přístupy k agendám CzechPOINT - 2007" },
       },
       {
         type: "create-dataset",
         source: "isds",
         createdAt: new Date("2022-02-08T10:33:55.810Z"),
-        identifier: "isds-1583728328",
+        identifier: "1583728328",
         organization: "17651921",
         attachmentPath: "/attachments/1583728328-nkod-registrace.jsonld_0.txt",
         label: {
           cs: "Registr silničních vozidel - technické údaje",
-          en: "Road Vehicle Register - Vehicle Technical Specifications"
-        }
+          en: "Road Vehicle Register - Vehicle Technical Specifications",
+        },
       },
     ]);
-
   });
-
 });

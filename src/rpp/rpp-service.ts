@@ -2,22 +2,20 @@ import { logger } from "../application";
 import { SparqlService } from "../sparql";
 
 export function createRppService(
-  sparql: SparqlService, endpoint: string,
+  sparql: SparqlService,
+  endpoint: string,
 ): RppService {
   return new SparqlRppService(sparql, endpoint);
 }
 
 export interface RppService {
-
   /**
    * @return Null when there is no mapping.
    */
-  databoxToOrganization(databox: string): Promise<string | null>
-
+  databoxToOrganization(databox: string): Promise<string | null>;
 }
 
 class SparqlRppService implements RppService {
-
   readonly endpoint: string;
 
   readonly cache: Map<string, string | null> = new Map();
@@ -40,7 +38,8 @@ class SparqlRppService implements RppService {
     if (result.length !== 1) {
       logger.warn(
         { databox, count: result.length },
-        "Invalid number of results for databox to organization SPARQL query.");
+        "Invalid number of results for databox to organization SPARQL query.",
+      );
       // Store null into the result.
       this.cache.set(databox, null);
       return null;
@@ -49,7 +48,8 @@ class SparqlRppService implements RppService {
     if (organization === undefined) {
       logger.warn(
         { databox, organization },
-        "Missing organization in a result of organization SPARQL query.");
+        "Missing organization in a result of organization SPARQL query.",
+      );
       throw Error();
     }
     // Update cache.
@@ -79,7 +79,6 @@ SELECT ?dsID ?ovmID WHERE {
 
   VALUES ?dsID {"${databox}"^^xsd:string}
 }
-  `
+  `;
   }
-
 }

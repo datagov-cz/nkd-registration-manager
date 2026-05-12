@@ -1,10 +1,8 @@
-
 export function createRouteService(baseUrl: string): RouteService {
   return new RouteService(baseUrl);
 }
 
 export class RouteService {
-
   private readonly baseUrl: string;
 
   constructor(baseUrl: string) {
@@ -16,17 +14,25 @@ export class RouteService {
   }
 
   listRegistrationInternal(): string {
-    return "/registrační-záznamy"
+    return "/registrační-záznamy";
   }
 
   listRegistrationWithPage(page: number): string {
-    return this.baseUrl + this.listRegistrationInternal()
-      + "?strana=" + encodeURIComponent(String(page));
+    return (
+      this.baseUrl +
+      this.listRegistrationInternal() +
+      "?strana=" +
+      encodeURIComponent(String(page))
+    );
   }
 
   registrationDetail(identifier: string): string {
-    return this.baseUrl + this.registrationDetailInternal()
-      + "?identifikátor=" + encodeURIComponent(identifier);
+    return (
+      this.baseUrl +
+      this.registrationDetailInternal() +
+      "?identifikátor=" +
+      encodeURIComponent(identifier)
+    );
   }
 
   registrationDetailInternal() {
@@ -46,15 +52,20 @@ export class RouteService {
   }
 
   registerDatasetForm(): string {
-    return this.baseUrl + "/formulář/registrace-datové-sady?returnUrl="
-      + encodeURIComponent(this.createRegistration());
+    return (
+      this.baseUrl +
+      "/formulář/registrace-datové-sady?returnUrl=" +
+      encodeURIComponent(this.createRegistration())
+    );
   }
 
   registerCatalogForm(): string {
-    return this.baseUrl + "/formulář/registrace-lokálního-katalogu?returnUrl="
-      + encodeURIComponent(this.createRegistration());
+    return (
+      this.baseUrl +
+      "/formulář/registrace-lokálního-katalogu?returnUrl=" +
+      encodeURIComponent(this.createRegistration())
+    );
   }
-
 }
 
 function asBase(url: string): string {

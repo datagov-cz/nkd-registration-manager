@@ -6,9 +6,7 @@ export function renderUnauthorizedViewHtml(state: UnauthorizedState) {
   return renderToHtml(<UnauthorizedViewHtml state={state} />);
 }
 
-function UnauthorizedViewHtml({ state }: {
-  state: UnauthorizedState,
-}) {
+function UnauthorizedViewHtml({ state }: { state: UnauthorizedState }) {
   return (
     <Layout language="cs" title="Nedostatečné oprávnění">
       <header class="gov-header">
@@ -18,10 +16,8 @@ function UnauthorizedViewHtml({ state }: {
       </header>
       <gov-container>
         <h2>Nedostatečné oprávnění</h2>
-        <p>
-          Nemáte oprávnění pracovat s touto aplikací.
-        </p>
+        <p>Nemáte oprávnění pracovat s touto aplikací.</p>
       </gov-container>
     </Layout>
-  )
+  );
 }

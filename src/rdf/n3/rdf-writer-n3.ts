@@ -5,12 +5,10 @@ import { StringRdfWriter } from "../rdf-writer";
 
 const dataFactory = N3.DataFactory;
 
-export function createStringN3RdfWriter(
-  options?: {
-    prefixes?: { [prefix: string]: string },
-    pretty?: boolean,
-  },
-): StringRdfWriter {
+export function createStringN3RdfWriter(options?: {
+  prefixes?: { [prefix: string]: string };
+  pretty?: boolean;
+}): StringRdfWriter {
   const writer = new N3.Writer({
     format: "text-turtle",
     prefixes: options?.prefixes ?? {},
@@ -41,7 +39,7 @@ export function createStringN3RdfWriter(
         });
       });
     },
-  }
+  };
 }
 
 function convertSubject(value: Node): N3.Quad_Subject {
@@ -66,9 +64,10 @@ function convertObject(value: Term): N3.Quad_Object {
     case "Literal":
       return dataFactory.literal(
         value.value,
-        value.language === null ?
-          dataFactory.namedNode(value.termType) :
-          value.language);
+        value.language === null
+          ? dataFactory.namedNode(value.termType)
+          : value.language,
+      );
   }
 }
 

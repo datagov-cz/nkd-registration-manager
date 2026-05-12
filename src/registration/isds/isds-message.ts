@@ -16,7 +16,6 @@ export async function parseIsdsMessage(
 }
 
 export interface IsdsMessage {
-
   messageIdentifier: string;
 
   annotation: string;
@@ -26,12 +25,9 @@ export interface IsdsMessage {
   receivedAt: Date;
 
   attachmentFileName: string;
-
 }
 
-function asIsdsMessage(
-  reader: ResourceReader,
-): IsdsMessage | null {
+function asIsdsMessage(reader: ResourceReader): IsdsMessage | null {
   const resource = reader.firstOfType(VOCABULARY.ReceivedRecord);
   if (resource === null) {
     // Unknown message type.
@@ -63,14 +59,15 @@ function asIsdsMessage(
     senderDataBox,
     receivedAt,
     attachmentFileName,
-  }
+  };
 }
 
 const VOCABULARY = {
   ReceivedRecord: "https://data.gov.cz/slovník/nkod/PřijatýZáznam",
   messageIdentifier: "https://data.gov.cz/slovník/nkod/id-datové-zprávy",
   annotation: "https://data.gov.cz/slovník/nkod/anotace",
-  senderMainBox: "https://data.gov.cz/slovník/nkod/datová-schránka-poskytovatele",
+  senderMainBox:
+    "https://data.gov.cz/slovník/nkod/datová-schránka-poskytovatele",
   receivedAt: "https://data.gov.cz/slovník/nkod/datová-zpráva-přijata",
   fileName: "https://data.gov.cz/slovník/nkod/jméno-souboru",
 };

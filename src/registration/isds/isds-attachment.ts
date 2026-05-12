@@ -7,6 +7,9 @@ import {
 } from "../../rdf";
 import { RegistrationType } from "../registration-model";
 
+/**
+ * @throws
+ */
 export async function parseIsdsAttachment(
   content: string,
 ): Promise<IsdsAttachment | null> {
@@ -43,13 +46,11 @@ export async function parseIsdsAttachment(
 }
 
 export interface IsdsAttachment {
-
   type: RegistrationType;
 
   iri: string | null;
 
   label: LanguageString | null;
-
 }
 
 function parseWithdrawDataset(dataset: SubjectReader): IsdsAttachment {
@@ -57,7 +58,7 @@ function parseWithdrawDataset(dataset: SubjectReader): IsdsAttachment {
     type: RegistrationType.WithdrawDataset,
     iri: dataset.identifier().value,
     label: null,
-  }
+  };
 }
 
 function parseCreateDataset(dataset: SubjectReader): IsdsAttachment {
@@ -65,7 +66,7 @@ function parseCreateDataset(dataset: SubjectReader): IsdsAttachment {
     type: RegistrationType.CreateDataset,
     iri: null,
     label: dataset.languageString(VOCABULARY.title),
-  }
+  };
 }
 
 function parseWithdrawCatalog(catalog: SubjectReader): IsdsAttachment {
@@ -73,7 +74,7 @@ function parseWithdrawCatalog(catalog: SubjectReader): IsdsAttachment {
     type: RegistrationType.WithdrawCatalog,
     iri: catalog.identifier().value,
     label: null,
-  }
+  };
 }
 
 function parseCreateCatalog(catalog: SubjectReader): IsdsAttachment {
@@ -81,14 +82,15 @@ function parseCreateCatalog(catalog: SubjectReader): IsdsAttachment {
     type: RegistrationType.CreateDataset,
     iri: null,
     label: catalog.languageString(VOCABULARY.title),
-  }
+  };
 }
 
 const VOCABULARY = {
   ReceivedRecord: "https://data.gov.cz/slovník/nkod/PřijatýZáznam",
   messageIdentifier: "https://data.gov.cz/slovník/nkod/id-datové-zprávy",
   annotation: "https://data.gov.cz/slovník/nkod/anotace",
-  senderMainBox: "https://data.gov.cz/slovník/nkod/datová-schránka-poskytovatele",
+  senderMainBox:
+    "https://data.gov.cz/slovník/nkod/datová-schránka-poskytovatele",
   receivedAt: "https://data.gov.cz/slovník/nkod/datová-zpráva-přijata",
   fileName: "https://data.gov.cz/slovník/nkod/jméno-souboru",
   Dataset: "http://www.w3.org/ns/dcat#Dataset",

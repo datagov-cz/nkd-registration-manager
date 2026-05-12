@@ -5,8 +5,7 @@ import Fastify, {
 } from "fastify";
 import fastifyCors from "@fastify/cors";
 import fastifyCookie from "@fastify/cookie";
-import fastifySession from "@fastify/session"
-import fastifyHelmet from "@fastify/helmet"
+import fastifySession from "@fastify/session";
 import fastifyFormBody from "@fastify/formbody";
 
 import { logger } from "../application/logger";
@@ -16,14 +15,11 @@ import {
   AuthenticationData,
   AuthenticationService,
 } from "../authentication/authentication";
-import { RouteService } from "../route";
 
 export async function createHttpServer(
   configuration: Configuration,
   authentication: AuthenticationService,
-  route: RouteService,
 ): Promise<HttpServer> {
-
   const server = Fastify({
     loggerInstance: logger,
     // For development.
@@ -46,7 +42,7 @@ export async function createHttpServer(
   server.register(fastifyCookie);
 
   // x-www-form-urlencoded - https://github.com/fastify/fastify-formbody
-  server.register(fastifyFormBody)
+  server.register(fastifyFormBody);
 
   // Sessions - https://www.npmjs.com/package/@fastify/session
   server.register(fastifySession, {
@@ -68,27 +64,25 @@ export async function createHttpServer(
   });
 
   server.addHook("onRequest", (request, reply, next) =>
-    authenticationMiddleware(authentication, request, reply, next));
+    authenticationMiddleware(authentication, request, reply, next),
+  );
 
   server.addHook("preHandler", (request, reply, next) =>
-    initializeSessionMiddleware(request, reply, next))
+    initializeSessionMiddleware(request, reply, next),
+  );
 
   // CORS - https://www.npmjs.com/package/@fastify/cors
   await server.register(fastifyCors, {
-    "origin": true,
+    origin: true,
   });
 
   return server;
 }
 
 declare module "fastify" {
-
   interface FastifyRequest {
-
     user: AuthenticationData;
-
   }
-
 }
 
 const HTTP_UNAUTHORIZED = 401;
@@ -118,13 +112,16 @@ function initializeSessionMiddleware(
 }
 
 export function startServer(configuration: Configuration, server: HttpServer) {
-  server.listen({
-    port: configuration.http.port,
-    host: configuration.http.host,
-  }, (error) => {
-    if (error) {
-      server.log.error(error);
-      process.exit(1);
-    }
-  });
+  server.listen(
+    {
+      port: configuration.http.port,
+      host: configuration.http.host,
+    },
+    (error) => {
+      if (error) {
+        server.log.error(error);
+        process.exit(1);
+      }
+    },
+  );
 }

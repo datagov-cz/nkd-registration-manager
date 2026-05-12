@@ -17,7 +17,6 @@ export async function parseDiskMessage(
 }
 
 export interface DiskMessage {
-
   identifier: string;
 
   organization: string;
@@ -25,12 +24,9 @@ export interface DiskMessage {
   createdAt: Date;
 
   attachmentFileName: string;
-
 }
 
-function asDiskMessage(
-  reader: ResourceReader,
-): DiskMessage | null {
+function asDiskMessage(reader: ResourceReader): DiskMessage | null {
   const resource = reader.firstOfType(VOCABULARY.ReceivedRecord);
   if (resource === null) {
     // Unknown message type.
@@ -57,15 +53,17 @@ function asDiskMessage(
     organization,
     createdAt: receivedAt,
     attachmentFileName,
-  }
+  };
 }
 
 export function writeDiskMessage<BuilderType>(
   builder: RdfBuilder<BuilderType>,
   message: DiskMessage,
 ): void {
-  const iri = "https://data.gov.cz/zdroj/nkod/přijaté-záznamy/" + message.identifier;
-  builder.addType(iri, VOCABULARY.ReceivedRecord)
+  const iri =
+    "https://data.gov.cz/zdroj/nkod/přijaté-záznamy/" + message.identifier;
+  builder
+    .addType(iri, VOCABULARY.ReceivedRecord)
     .addLiteral(iri, VOCABULARY.identifier, message.identifier)
     .addLiteral(iri, VOCABULARY.organization, message.organization)
     .addLiteral(iri, VOCABULARY.receivedAt, message.createdAt)

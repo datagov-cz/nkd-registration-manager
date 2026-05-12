@@ -22,8 +22,7 @@ const ConfigurationSchema = z.object({
      * This is available only for development,
      * do not use in a production.
      */
-    useMock: z.boolean()
-
+    useMock: z.boolean(),
   }),
   /**
    * Authorization once user is authenticated.
@@ -82,7 +81,10 @@ const ConfigurationSchema = z.object({
      * Interval in seconds between automatic ISDS synchronizations.
      * Set to 0 to disable periodic sync.
      */
-    syncIntervalSeconds: z.coerce.number().nonnegative().default(60 * 5),
+    syncIntervalSeconds: z.coerce
+      .number()
+      .nonnegative()
+      .default(60 * 5),
   }),
   repository: z.object({
     /**
@@ -127,7 +129,7 @@ const createConfiguration = (): Configuration => {
     isds: {
       messagesPath: resolvePath(env.ISDS_MESSAGES),
       attachmentsPath: resolvePath(env.ISDS_ATTACHMENTS),
-      syncIntervalSeconds: env.ISDS_SYNC_INTERVAL,
+      syncIntervalSeconds: env.ISDS_SYNC_INTERVAL_SECONDS,
     },
     repository: {
       messagesPath: resolvePath(env.REPOSITORY_MESSAGES),

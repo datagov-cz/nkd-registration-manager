@@ -1,6 +1,10 @@
 import { HeaderBranding, HeaderNavigation, Layout } from "../../components";
 import { renderToHtml } from "../../html";
-import { MessageItem, PaginationState, RegistrationListGetState } from "./registration-list-model";
+import {
+  MessageItem,
+  PaginationState,
+  RegistrationListGetState,
+} from "./registration-list-model";
 
 export function renderRegistrationListGetViewHtml(
   state: RegistrationListGetState,
@@ -8,9 +12,11 @@ export function renderRegistrationListGetViewHtml(
   return renderToHtml(<RegistrationListGetViewHtml state={state} />);
 }
 
-function RegistrationListGetViewHtml(
-  { state }: { state: RegistrationListGetState },
-) {
+function RegistrationListGetViewHtml({
+  state,
+}: {
+  state: RegistrationListGetState;
+}) {
   return (
     <Layout language="cs" title="Přehled registrací">
       <header class="gov-header">
@@ -31,27 +37,23 @@ function RegistrationListGetViewHtml(
         )}
       </gov-container>
     </Layout>
-  )
+  );
 }
 
-function EmptyRegistrationList(
-  { state }: { state: RegistrationListGetState },
-) {
+function EmptyRegistrationList({ state }: { state: RegistrationListGetState }) {
   return (
     <p>
       Pro vaší organizaci nejsou k dispozici žádné registrační zprávy.
       Registrační záznam můžete přidat přes
       <a href={state.createRegistrationUrl}>vložení registračního záznamu</a>.
     </p>
-  )
+  );
 }
 
-function RegistrationList({ messages }: {
-  messages: MessageItem[],
-}) {
+function RegistrationList({ messages }: { messages: MessageItem[] }) {
   return (
     <ul class="registrations-list">
-      {messages.map(item => (
+      {messages.map((item) => (
         <li>
           <a href={item.detailUrl}>{item.label}</a> <br />
           Záznam vytvořen v
@@ -81,9 +83,7 @@ function Pagination({ pagination }: { pagination: PaginationState }) {
         wcag-label="Stránkování pro registrační záznamy"
         wcag-select-label="Vybrat stránku"
         link="?str%C3%A1nka&#x3D;{PAGE}"
-      >
-      </gov-pagination>
-
+      ></gov-pagination>
     </nav>
   );
 }

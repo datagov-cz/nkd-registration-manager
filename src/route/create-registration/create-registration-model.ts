@@ -1,7 +1,6 @@
 import { HeaderBrandingState, HeaderNavigationState } from "../../components";
 
 export interface CreateRegistrationGetState {
-
   branding: HeaderBrandingState;
 
   navigation: HeaderNavigationState;
@@ -11,5 +10,4 @@ export interface CreateRegistrationGetState {
   catalogRegistrationUrl: string;
 
   registrationUploadUrl: string;
-
 }

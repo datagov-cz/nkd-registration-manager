@@ -1,15 +1,11 @@
-
 export interface Registration extends RegistrationItem {
-
   /**
    * Content of the attachment.
    */
   attachmentContent: string;
-
 }
 
 export interface RegistrationItem {
-
   identifier: string;
 
   /**
@@ -35,7 +31,6 @@ export interface RegistrationItem {
    * Content of an attachment file as JSON-LD.
    */
   attachmentPath: string;
-
 }
 
 export enum RegistrationSource {

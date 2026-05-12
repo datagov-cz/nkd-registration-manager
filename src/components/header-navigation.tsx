@@ -1,8 +1,6 @@
 import { RouteService } from "../route";
 
-export function HeaderNavigation({ state }: {
-  state: HeaderNavigationState,
-}) {
+export function HeaderNavigation({ state }: { state: HeaderNavigationState }) {
   return (
     <gov-nav wcag-label="Hlavní navigace">
       <gov-nav-item
@@ -18,7 +16,7 @@ export function HeaderNavigation({ state }: {
         Přehled registračních záznamů
       </gov-nav-item>
     </gov-nav>
-  )
+  );
 }
 
 function active(value?: boolean): string {
@@ -29,7 +27,6 @@ function active(value?: boolean): string {
 }
 
 export interface HeaderNavigationState {
-
   listRegistrationUrl: string;
 
   createRegistrationActive?: boolean;
@@ -37,7 +34,6 @@ export interface HeaderNavigationState {
   createRegistrationUrl: string;
 
   listRegistrationActive?: boolean;
-
 }
 
 export function createHeaderNavigationState(
@@ -46,5 +42,5 @@ export function createHeaderNavigationState(
   return {
     listRegistrationUrl: route.listRegistration(),
     createRegistrationUrl: route.createRegistration(),
-  }
+  };
 }

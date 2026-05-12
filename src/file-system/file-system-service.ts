@@ -9,7 +9,6 @@ export function createFileSystemService(): FileSystemService {
  * This service should be used for any interaction with a file system.
  */
 export interface FileSystemService {
-
   /**
    * @returns File content.
    */
@@ -24,11 +23,9 @@ export interface FileSystemService {
    * Write content of given file.
    */
   writeFile(path: string, content: string): Promise<void>;
-
 }
 
 class DefaultFileSystemService implements FileSystemService {
-
   readFile(path: string): Promise<string> {
     return fileModule.readFile(path, { encoding: "utf-8" });
   }
@@ -36,8 +33,8 @@ class DefaultFileSystemService implements FileSystemService {
   async readDirectory(path: string): Promise<string[]> {
     const items = await fileModule.readdir(path, { withFileTypes: true });
     return items
-      .filter(item => item.isFile())
-      .map(item => pathModule.join(path, item.name));
+      .filter((item) => item.isFile())
+      .map((item) => pathModule.join(path, item.name));
   }
 
   async writeFile(path: string, content: string): Promise<void> {
@@ -48,35 +45,33 @@ class DefaultFileSystemService implements FileSystemService {
       await fileModule.rename(tempPath, path);
     } catch (error) {
       try {
-         await fileModule.unlink(tempPath);
+        await fileModule.unlink(tempPath);
       } catch {
         // Do nothing here.
       }
       throw error;
     }
   }
-
 }
 
-export function mockFileSystemService(
-  files: { [path: string]: string },
-): FileSystemService {
+export function mockFileSystemService(files: {
+  [path: string]: string;
+}): FileSystemService {
   return {
     async readDirectory(path) {
       // TODO This does not properly handle sub directories.
       const prefix = path.endsWith("/") ? path : path + "/";
-      return Object.keys(files)
-        .filter(item => item.startsWith(prefix));
+      return Object.keys(files).filter((item) => item.startsWith(prefix));
     },
     readFile(path) {
       const content = files[path];
       if (content === undefined) {
-        throw Error(`File path '${path}' not expected.`)
+        throw Error(`File path '${path}' not expected.`);
       }
       return Promise.resolve(content);
     },
     async writeFile(path, content) {
       files[path] = content;
     },
-  }
-};
+  };
+}

@@ -1,20 +1,15 @@
 import { Resource, ResourceByIri } from "./resource-model";
 import { Node } from "../rdf-model";
 
-export function createResourceReader(
-  record: ResourceByIri,
-): ResourceReader {
+export function createResourceReader(record: ResourceByIri): ResourceReader {
   return new DefaultResourceReader(record);
 }
 
 export interface ResourceReader {
-
   firstOfType(type: string): SubjectReader | null;
-
 }
 
 export interface SubjectReader {
-
   identifier(): Node;
 
   value(predicate: string): string | null;
@@ -22,7 +17,6 @@ export interface SubjectReader {
   date(predicate: string): Date | null;
 
   languageString(predicate: string): LanguageString | null;
-
 }
 
 type LanguageString = { [language: string]: string };
@@ -32,7 +26,6 @@ const RDFS = {
 };
 
 class DefaultResourceReader implements ResourceReader {
-
   private readonly resources: ResourceByIri;
 
   constructor(record: ResourceByIri) {
@@ -42,17 +35,15 @@ class DefaultResourceReader implements ResourceReader {
   firstOfType(type: string) {
     for (const resource of Object.values(this.resources)) {
       const types = resource.properties[RDFS.type] ?? [];
-      if (types.find(item => item.value === type) !== undefined) {
+      if (types.find((item) => item.value === type) !== undefined) {
         return new DefaultSubjectReader(resource);
       }
     }
     return null;
   }
-
 }
 
 class DefaultSubjectReader implements SubjectReader {
-
   readonly resource: Resource;
 
   constructor(resource: Resource) {
@@ -78,17 +69,16 @@ class DefaultSubjectReader implements SubjectReader {
 
   languageString(predicate: string): LanguageString | null {
     const values = this.resource.properties[predicate];
-    const result : LanguageString = {};
+    const result: LanguageString = {};
     for (const value of values) {
-      if ( value.termType !== "Literal") {
+      if (value.termType !== "Literal") {
         continue;
       }
       result[value.language ?? ""] = value.value;
     }
-    if (Object.keys(result).length === 0 ) {
+    if (Object.keys(result).length === 0) {
       return null;
     }
     return result;
   }
-
 }

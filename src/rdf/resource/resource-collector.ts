@@ -22,7 +22,7 @@ export function createResourceCollector(): ResourceCollector {
     },
     result(): ResourceByIri {
       return resourceMap;
-    }
+    },
   };
 }
 
@@ -34,14 +34,17 @@ function getOrCreateResource(
   let resource = resourceMap[identifier];
   if (resource === undefined) {
     resource = {
-      identifier: subject.termType === "NamedNode" ? {
-        termType: "NamedNode",
-        value: identifier,
-      } : {
-        termType: "BlankNode",
-        value: identifier,
-      },
-      "properties": {},
+      identifier:
+        subject.termType === "NamedNode"
+          ? {
+              termType: "NamedNode",
+              value: identifier,
+            }
+          : {
+              termType: "BlankNode",
+              value: identifier,
+            },
+      properties: {},
     };
     resourceMap[identifier] = resource;
   }
@@ -49,7 +52,5 @@ function getOrCreateResource(
 }
 
 export interface ResourceCollector extends RdfCollector {
-
   result(): ResourceByIri;
-
 }

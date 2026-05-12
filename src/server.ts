@@ -1,5 +1,8 @@
 import { configuration } from "./application/configuration";
-import { createAuthenticationService, createMockAuthenticationService } from "./authentication";
+import {
+  createAuthenticationService,
+  createMockAuthenticationService,
+} from "./authentication";
 import { createFileSystemService } from "./file-system";
 import { createHttpServer, startServer } from "./http";
 import { logger } from "./application";
@@ -16,29 +19,30 @@ import { createSparqlService } from "./sparql";
   const rpp = createRppService(sparql, configuration.rpp.sparql);
 
   const isdsRepository = createIsdsRepository(
-    fileSystem, rpp,
+    fileSystem,
+    rpp,
     configuration.isds.messagesPath,
-    configuration.isds.attachmentsPath);
+    configuration.isds.attachmentsPath,
+  );
 
   const diskRepository = createDiskRepository(
     fileSystem,
     configuration.repository.messagesPath,
-    configuration.repository.attachmentsPath);
+    configuration.repository.attachmentsPath,
+  );
 
-  const repository = createRegistrationService(
-    isdsRepository, diskRepository);
+  const repository = createRegistrationService(isdsRepository, diskRepository);
 
   const useMockAuthentication =
     configuration.authentication.useMock && configuration.development;
-  const authentication = useMockAuthentication ?
-    createMockAuthenticationService() :
-    createAuthenticationService(
-      configuration.authorization.requiredActivityRoleCode);
+  const authentication = useMockAuthentication
+    ? createMockAuthenticationService()
+    : createAuthenticationService(
+        configuration.authorization.requiredActivityRoleCode,
+      );
 
-  const route = createRouteService(
-    configuration.http.baseUrl);
-  const httpServer = await createHttpServer(
-    configuration, authentication, route);
+  const route = createRouteService(configuration.http.baseUrl);
+  const httpServer = await createHttpServer(configuration, authentication);
   registerRoutes(configuration, httpServer, repository, route);
 
   // Initial synchronization — non-blocking, server can start without data.
@@ -49,9 +53,12 @@ import { createSparqlService } from "./sparql";
   // Periodic synchronization.
   const syncIntervalMs = configuration.isds.syncIntervalSeconds * 1_000;
   if (syncIntervalMs > 0) {
-    logger.info({
-      interval: configuration.isds.syncIntervalSeconds
-    }, "Enabling ISDS synchronization for given interval (seconds).");
+    logger.info(
+      {
+        interval: configuration.isds.syncIntervalSeconds,
+      },
+      "Enabling ISDS synchronization for given interval (seconds).",
+    );
     setInterval(() => {
       isdsRepository.synchronize().catch((error) => {
         logger.error({ error }, "ISDS periodic synchronization failed.");

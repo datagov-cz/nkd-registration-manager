@@ -3,12 +3,10 @@ import { createStringN3RdfReader } from "./rdf-parser-n3";
 import { collectToArray } from "../rdf-reader";
 
 describe("createStringN3RdfReader", () => {
-
   /**
    * Parse simple turtle file fragment.
    */
   test("Implementation test I.", async () => {
-
     const input = `
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
@@ -39,5 +37,4 @@ describe("createStringN3RdfReader", () => {
 
     expect(actual.length).toBe(10);
   });
-
 });

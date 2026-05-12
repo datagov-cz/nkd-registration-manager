@@ -17,11 +17,14 @@ export function createIsdsRepository(
   attachmentsPath: string,
 ): IsdsRepository {
   return new DefaultIsdsRepository(
-    fileSystem, rppService, messagesPath, attachmentsPath);
+    fileSystem,
+    rppService,
+    messagesPath,
+    attachmentsPath,
+  );
 }
 
 export interface IsdsRepository {
-
   readRegistration(
     organization: string,
     identifier: string,
@@ -36,11 +39,9 @@ export interface IsdsRepository {
    * Run synchronize content with storage.
    */
   synchronize(): Promise<void>;
-
 }
 
 class DefaultIsdsRepository implements IsdsRepository {
-
   readonly messages: RegistrationItem[] = [];
 
   /**
@@ -74,8 +75,10 @@ class DefaultIsdsRepository implements IsdsRepository {
     organization: string,
     identifier: string,
   ): Promise<Registration | null> {
-    const entry = this.messages.find(item =>
-      item.organization === organization && item.identifier === identifier);
+    const entry = this.messages.find(
+      (item) =>
+        item.organization === organization && item.identifier === identifier,
+    );
     if (entry === undefined) {
       return null;
     }
@@ -86,7 +89,7 @@ class DefaultIsdsRepository implements IsdsRepository {
   }
 
   listRegistrations(organization: string): RegistrationItem[] {
-    return this.messages.filter(item => item.organization === organization);
+    return this.messages.filter((item) => item.organization === organization);
   }
 
   async synchronize(): Promise<void> {
@@ -102,7 +105,8 @@ class DefaultIsdsRepository implements IsdsRepository {
       } catch (error) {
         logger.warn(
           { message: messagePath, error: (error as Error).message },
-          "Failed to process a message.");
+          "Failed to process a message.",
+        );
       }
     }
   }
@@ -112,7 +116,8 @@ class DefaultIsdsRepository implements IsdsRepository {
     const messageContent = await this.fileSystem.readFile(messagePath);
     const message = await parseIsdsMessage(messageContent);
     // Validate message.
-    if (message === null ||
+    if (
+      message === null ||
       message.senderDataBox === null ||
       message.messageIdentifier === null ||
       message.attachmentFileName === null
@@ -120,8 +125,7 @@ class DefaultIsdsRepository implements IsdsRepository {
       throw new Error("ISDS Message is not valid.");
     }
     // Read attachment.
-    const attachmentPath =
-      `${this.attachmentsPath}/${message.attachmentFileName}`;
+    const attachmentPath = `${this.attachmentsPath}/${message.attachmentFileName}`;
     const attachmentContent = await this.fileSystem.readFile(attachmentPath);
     const attachment = await parseIsdsAttachment(attachmentContent);
     // Validate attachment.
@@ -130,7 +134,8 @@ class DefaultIsdsRepository implements IsdsRepository {
     }
     // Get organization - we need to change from IRI to databox identifier.
     const databox = message.senderDataBox.substring(
-      message.senderDataBox.lastIndexOf("/") + 1);
+      message.senderDataBox.lastIndexOf("/") + 1,
+    );
     const organization = await this.rppService.databoxToOrganization(databox);
     if (organization === null) {
       throw new Error("Unknown databox identifier.");
@@ -157,5 +162,4 @@ class DefaultIsdsRepository implements IsdsRepository {
       label,
     };
   }
-
 }

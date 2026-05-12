@@ -1,18 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { mockFileSystemService } from "../../file-system";
-import {
-  RegistrationType,
-  RegistrationSource,
-} from "../registration-model";
+import { RegistrationType, RegistrationSource } from "../registration-model";
 import { createDiskRepository } from "./disk-repository";
 
 describe("createDiskRepository", () => {
-
-  it("Implementation test I.", async () => {
+  it("Default implementation test.", async () => {
     const fileSystem = mockFileSystemService({});
 
     const repository = createDiskRepository(
-      fileSystem, "/messages", "/attachments");
+      fileSystem,
+      "/messages",
+      "/attachments",
+    );
 
     await repository.synchronize();
 
@@ -28,7 +27,7 @@ describe("createDiskRepository", () => {
   }
 }`;
 
-    await repository.createRegistration(now, "17651921", "the-one", content);
+    await repository.createRegistration(now, "17651921", content);
 
     const registrations = await repository.listRegistrations("17651921");
     expect(registrations.length).toBe(1);
@@ -39,17 +38,19 @@ describe("createDiskRepository", () => {
     expect(dataset.source).toBe(RegistrationSource.RegistrationManager);
     expect(dataset.type).toBe(RegistrationType.CreateDataset);
     expect(dataset.label).toStrictEqual({
-      "cs": "Úřední deska státního úřadu"
+      cs: "Úřední deska státního úřadu",
     });
 
     // Try to load the attachment.
     const actual = await repository.readRegistration(
-      "17651921", dataset.identifier);
+      "17651921",
+      dataset.identifier,
+    );
     expect(actual).not.toBeNull();
     expect(actual?.attachmentContent).toStrictEqual(content);
   });
 
-  it("Synchronization test I.", async () => {
+  it("Default synchronization test.", async () => {
     const files = {
       "/attachments/registration-manager-1774299953387.jsonld": `{
   "@context": "https://ofn.gov.cz/rozhraní-katalogů-otevřených-dat/2021-01-11/kontexty/rozhraní-katalogů-otevřených-dat.jsonld",
@@ -65,18 +66,20 @@ describe("createDiskRepository", () => {
   <https://data.gov.cz/slovník/nkod/uživatelský-účet> "the-one";
   <https://data.gov.cz/slovník/nkod/datová-zpráva-přijata> "2026-03-23T21:05:53.387Z";
   <https://data.gov.cz/slovník/nkod/jméno-souboru> "registration-manager-1774299953387.jsonld".
-  `}
+  `,
+    };
 
     const fileSystem = mockFileSystemService(files);
 
     const repository = createDiskRepository(
-      fileSystem, "/messages", "/attachments");
+      fileSystem,
+      "/messages",
+      "/attachments",
+    );
 
     await repository.synchronize();
 
     const registrations = await repository.listRegistrations("17651921");
     expect(registrations.length).toBe(1);
-
   });
-
 });

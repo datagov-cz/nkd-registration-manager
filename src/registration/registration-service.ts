@@ -10,7 +10,6 @@ export function createRegistrationService(
 }
 
 export interface RegistrationService {
-
   readRegistration(
     organization: string,
     identifier: string,
@@ -28,17 +27,15 @@ export interface RegistrationService {
     createdAt: number,
     organization: string,
     attachment: string,
-  ): Promise<RegistrationItem>
+  ): Promise<RegistrationItem>;
 
   /**
    * Run synchronize content with storage.
    */
   synchronize(): Promise<void>;
-
 }
 
 class DefaultRegistrationService implements RegistrationService {
-
   readonly isds: IsdsRepository;
 
   readonly disk: DiskRepository;
@@ -49,11 +46,14 @@ class DefaultRegistrationService implements RegistrationService {
   }
 
   async readRegistration(
-    organization: string, identifier: string,
+    organization: string,
+    identifier: string,
   ): Promise<Registration | null> {
-    return await this.isds.readRegistration(organization, identifier) ??
-      await this.disk.readRegistration(organization, identifier) ??
-      null;
+    return (
+      (await this.isds.readRegistration(organization, identifier)) ??
+      (await this.disk.readRegistration(organization, identifier)) ??
+      null
+    );
   }
 
   listRegistrations(organization: string): RegistrationItem[] {
@@ -64,7 +64,9 @@ class DefaultRegistrationService implements RegistrationService {
   }
 
   async createRegistration(
-    createdAt: number, organization: string, attachment: string,
+    createdAt: number,
+    organization: string,
+    attachment: string,
   ): Promise<RegistrationItem> {
     return this.disk.createRegistration(createdAt, organization, attachment);
   }
@@ -72,5 +74,4 @@ class DefaultRegistrationService implements RegistrationService {
   async synchronize(): Promise<void> {
     await Promise.all([this.isds.synchronize(), this.disk.synchronize()]);
   }
-
 }

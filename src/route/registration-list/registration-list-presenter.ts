@@ -3,8 +3,14 @@ import { type FastifyReply, type FastifyRequest } from "fastify";
 import { RegistrationItem, RegistrationService } from "../../registration";
 import { AuthenticationData } from "../../authentication";
 import { RouteService } from "../route-service";
-import { createHeaderBrandingState, createHeaderNavigationState } from "../../components";
-import { PaginationState, RegistrationListGetState } from "./registration-list-model";
+import {
+  createHeaderBrandingState,
+  createHeaderNavigationState,
+} from "../../components";
+import {
+  PaginationState,
+  RegistrationListGetState,
+} from "./registration-list-model";
 import { renderRegistrationListGetViewHtml } from "./registration-list-view-html";
 
 const PAGE_SIZE = 10;
@@ -22,12 +28,15 @@ export function handleRegistrationListGet(
 
   const allMessages = repository.listRegistrations(user.entity.identifier);
   const sorted = [...allMessages].sort(
-    (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+    (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
   );
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
   const safePage = Math.min(currentPage, totalPages);
-  const pageItems = sorted.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  const pageItems = sorted.slice(
+    (safePage - 1) * PAGE_SIZE,
+    safePage * PAGE_SIZE,
+  );
 
   const pagination: PaginationState = {
     currentPage: Number(safePage),
@@ -55,7 +64,7 @@ function createState(
       listRegistrationActive: true,
     },
     createRegistrationUrl: route.createRegistration(),
-    messages: messages.map(message => ({
+    messages: messages.map((message) => ({
       identifier: message.identifier,
       label: message.label["cs"],
       source: message.source,
@@ -64,5 +73,5 @@ function createState(
       detailUrl: route.registrationDetail(message.identifier),
     })),
     pagination,
-  }
+  };
 }

@@ -2,12 +2,10 @@ import { AuthenticationData } from "../authentication";
 import { RouteService } from "../route";
 
 const logoutStyle = {
-  color: "var(--gov-nav-color, var(--gov-color-neutral-white))"
+  color: "var(--gov-nav-color, var(--gov-color-neutral-white))",
 };
 
-export function HeaderBranding({ state }: {
-  state: HeaderBrandingState,
-}) {
+export function HeaderBranding({ state }: { state: HeaderBrandingState }) {
   return (
     <gov-branding>
       <h1 class="heading">
@@ -24,17 +22,15 @@ export function HeaderBranding({ state }: {
         </a>
       </div>
     </gov-branding>
-  )
+  );
 }
 
 export interface HeaderBrandingState {
-
   userName: string;
 
   organizationName: string;
 
   logoutUrl: string;
-
 }
 
 export function createHeaderBrandingState(
@@ -45,5 +41,5 @@ export function createHeaderBrandingState(
     userName: `${user.familyName} ${user.givenName}`,
     organizationName: user.entity.name,
     logoutUrl: route.caaisLogout(),
-  }
+  };
 }

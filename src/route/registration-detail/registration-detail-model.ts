@@ -2,7 +2,6 @@ import { HeaderBrandingState, HeaderNavigationState } from "../../components";
 import { RegistrationSource, RegistrationType } from "../../registration";
 
 export interface RegistrationDetailGetState {
-
   branding: HeaderBrandingState;
 
   navigation: HeaderNavigationState;
@@ -16,5 +15,4 @@ export interface RegistrationDetailGetState {
   attachmentContent: string;
 
   registrationListUrl: string;
-
 }

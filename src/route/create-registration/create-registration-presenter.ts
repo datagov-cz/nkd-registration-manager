@@ -3,7 +3,10 @@ import { RegistrationService } from "../../registration";
 import { RouteService } from "../route-service";
 import { HttpStatusCode } from "../../http";
 import { renderCreateRegistrationGetViewHtml } from "./create-registration-view-html";
-import { createHeaderBrandingState, createHeaderNavigationState } from "../../components";
+import {
+  createHeaderBrandingState,
+  createHeaderNavigationState,
+} from "../../components";
 import { CreateRegistrationGetState } from "./create-registration-model";
 
 export async function handleCreateRegistrationGet(
@@ -47,7 +50,10 @@ export async function handleCreateRegistrationPost(
   const now = Date.now();
   for (const attachment of attachments) {
     await repository.createRegistration(
-      now, user.entity.identifier, attachment);
+      now,
+      user.entity.identifier,
+      attachment,
+    );
   }
 
   // We need to encode the value for a redirect.
@@ -58,7 +64,7 @@ export async function handleCreateRegistrationPost(
  * @param request
  * @returns All attachments as strings.
  */
-async function readAttachments(request: FastifyRequest,) {
+async function readAttachments(request: FastifyRequest) {
   const contentType = request.headers["content-type"];
   if (contentType === undefined) {
     return [];
@@ -84,7 +90,7 @@ async function readAttachments(request: FastifyRequest,) {
  */
 async function readMultipart(request: FastifyRequest): Promise<string[]> {
   const result: string[] = [];
-  const parts = request.files()
+  const parts = request.files();
   for await (const part of parts) {
     if (part.type !== "file") {
       continue;

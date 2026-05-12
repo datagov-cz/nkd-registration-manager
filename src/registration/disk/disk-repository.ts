@@ -24,12 +24,10 @@ export function createDiskRepository(
   messagesPath: string,
   attachmentsPath: string,
 ): DiskRepository {
-  return new DefaultDiskRepository(
-    fileSystem, messagesPath, attachmentsPath);
+  return new DefaultDiskRepository(fileSystem, messagesPath, attachmentsPath);
 }
 
 export interface DiskRepository {
-
   readRegistration(
     organization: string,
     identifier: string,
@@ -47,17 +45,15 @@ export interface DiskRepository {
     createdAt: number,
     organization: string,
     attachment: string,
-  ): Promise<RegistrationItem>
+  ): Promise<RegistrationItem>;
 
   /**
    * Run synchronize content with storage.
    */
   synchronize(): Promise<void>;
-
 }
 
 class DefaultDiskRepository implements DiskRepository {
-
   readonly messages: RegistrationItem[] = [];
 
   readonly identifiers: Set<string> = new Set();
@@ -82,8 +78,10 @@ class DefaultDiskRepository implements DiskRepository {
     organization: string,
     identifier: string,
   ): Promise<Registration | null> {
-    const entry = this.messages.find(item =>
-      item.organization === organization && item.identifier === identifier);
+    const entry = this.messages.find(
+      (item) =>
+        item.organization === organization && item.identifier === identifier,
+    );
     if (entry === undefined) {
       return null;
     }
@@ -94,7 +92,7 @@ class DefaultDiskRepository implements DiskRepository {
   }
 
   listRegistrations(organization: string): RegistrationItem[] {
-    return this.messages.filter(item => item.organization === organization);
+    return this.messages.filter((item) => item.organization === organization);
   }
 
   async createRegistration(
@@ -132,7 +130,10 @@ class DefaultDiskRepository implements DiskRepository {
     this.fileSystem.writeFile(messagePath, messageContent);
     // Crete, store, and return message.
     const entry = createRegistrationEntry(
-      this.attachmentsPath, message, attachment);
+      this.attachmentsPath,
+      message,
+      attachment,
+    );
     this.messages.push(entry);
     return entry;
   }
@@ -142,9 +143,12 @@ class DefaultDiskRepository implements DiskRepository {
     do {
       const hex = randomBytes(12).toString("hex");
       identifier =
-        "01-" + hex.slice(0, 4) +
-        "-" + hex.slice(4, 8) +
-        "-" + hex.slice(8, 12);
+        "01-" +
+        hex.slice(0, 4) +
+        "-" +
+        hex.slice(4, 8) +
+        "-" +
+        hex.slice(8, 12);
     } while (this.identifiers.has(identifier));
     this.identifiers.add(identifier);
     return identifier;
@@ -158,7 +162,8 @@ class DefaultDiskRepository implements DiskRepository {
         // This can be slow once there are many messages.
         this.identifiers.add(message.identifier);
         const index = this.messages.findIndex(
-          item => item.identifier === message.identifier);
+          (item) => item.identifier === message.identifier,
+        );
         if (index === -1) {
           this.messages.push(message);
         } else {
@@ -167,7 +172,8 @@ class DefaultDiskRepository implements DiskRepository {
       } catch (error) {
         logger.warn(
           { message: messagePath, error: (error as Error).message },
-          "Failed to process a message.");
+          "Failed to process a message.",
+        );
       }
     }
   }
@@ -180,8 +186,7 @@ class DefaultDiskRepository implements DiskRepository {
       throw new Error("Message is not valid.");
     }
     // Read attachment.
-    const attachmentPath =
-      `${this.attachmentsPath}/${message.attachmentFileName}`;
+    const attachmentPath = `${this.attachmentsPath}/${message.attachmentFileName}`;
     const attachmentContent = await this.fileSystem.readFile(attachmentPath);
     const attachment = await parseIsdsAttachment(attachmentContent);
     // Validate attachment.
@@ -217,5 +222,5 @@ function createRegistrationEntry(
     type: attachment.type,
     label,
     attachmentPath: attachmentsPath + "/" + message.attachmentFileName,
-  }
+  };
 }
