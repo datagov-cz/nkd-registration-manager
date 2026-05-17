@@ -1,16 +1,14 @@
 import { randomBytes } from "node:crypto";
 import { FileSystemService } from "../../file-system";
-import {
-  createStatementRdfBuilder,
-  createStringN3RdfWriter,
-  LanguageString,
-} from "../../rdf";
+import { createStatementRdfBuilder, createStringN3RdfWriter } from "../../rdf";
 import { parseIsdsAttachment } from "../isds";
 import { IsdsAttachment } from "../isds/isds-attachment";
 import {
+  isWithdrawRegistrationType,
   Registration,
   RegistrationItem,
   RegistrationSource,
+  WithdrawItem,
 } from "../registration-model";
 import {
   DiskMessage,
@@ -202,25 +200,18 @@ function createRegistrationEntry(
   message: DiskMessage,
   attachment: IsdsAttachment,
 ): RegistrationItem {
-  // Prepare label.
-  let label: LanguageString = {};
-  if (attachment.label === null) {
-    if (attachment.iri === null) {
-      // We have nothing to show.
-    } else {
-      label = { "": attachment.iri };
-    }
-  } else {
-    label = attachment.label;
-  }
-  //
-  return {
+  const entry: RegistrationItem = {
     identifier: message.identifier,
     organization: message.organization,
     createdAt: message.createdAt,
     source: RegistrationSource.RegistrationManager,
     type: attachment.type,
-    label,
+    label: attachment.label ?? {},
     attachmentPath: attachmentsPath + "/" + message.attachmentFileName,
   };
+  // Special handling of withdraw messages.
+  if (isWithdrawRegistrationType(entry.type)) {
+    (entry as WithdrawItem).withdrawResource = attachment.iri;
+  }
+  return entry;
 }

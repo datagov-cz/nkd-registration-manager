@@ -33,4 +33,9 @@ export interface MessageItem {
   createdAt: Date;
 
   detailUrl: string;
+
+  /**
+   * URL of a resource to withdraw.
+   */
+  withdrawUrl: string | null;
 }

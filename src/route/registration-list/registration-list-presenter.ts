@@ -1,6 +1,10 @@
 import { type FastifyReply, type FastifyRequest } from "fastify";
 
-import { RegistrationItem, RegistrationService } from "../../registration";
+import {
+  isWithdrawItem,
+  RegistrationItem,
+  RegistrationService,
+} from "../../registration";
 import { AuthenticationData } from "../../authentication";
 import { RouteService } from "../route-service";
 import {
@@ -71,6 +75,7 @@ function createState(
       type: message.type,
       createdAt: message.createdAt,
       detailUrl: route.registrationDetail(message.identifier),
+      withdrawUrl: isWithdrawItem(message) ? message.withdrawResource : null,
     })),
     pagination,
   };

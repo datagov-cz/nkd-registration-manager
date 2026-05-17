@@ -1,5 +1,6 @@
 import { HeaderBranding, HeaderNavigation, Layout } from "../../components";
 import { renderToHtml } from "../../html";
+import { RegistrationType } from "../../registration";
 import {
   MessageItem,
   PaginationState,
@@ -55,18 +56,47 @@ function RegistrationList({ messages }: { messages: MessageItem[] }) {
     <ul class="registrations-list">
       {messages.map((item) => (
         <li>
-          <a href={item.detailUrl}>{item.label}</a> <br />
-          Záznam vytvořen v
-          <time datetime={item.createdAt.toISOString()}>
-            {item.createdAt.toLocaleString("cs-CZ", {
-              dateStyle: "full",
-              timeStyle: "short",
-              timeZone: "Europe/Prague",
-            })}
-          </time>
+          <RegistrationItem item={item} />
         </li>
       ))}
     </ul>
+  );
+}
+
+function RegistrationItem({ item }: { item: MessageItem }) {
+  if (item.type === RegistrationType.WithdrawCatalog) {
+    return (
+      <>
+        <a href={item.detailUrl}>Smazání registrace katalogu</a> <br />
+        Záznam vytvořen v <DateTime value={item.createdAt} />
+      </>
+    );
+  }
+  if (item.type === RegistrationType.WithdrawDataset) {
+    return (
+      <>
+        <a href={item.detailUrl}>Smazání registrace datové sady</a> <br />
+        Záznam vytvořen v <DateTime value={item.createdAt} />
+      </>
+    );
+  }
+  return (
+    <>
+      <a href={item.detailUrl}>{item.label}</a> <br />
+      Záznam vytvořen v <DateTime value={item.createdAt} />
+    </>
+  );
+}
+
+function DateTime({ value }: { value: Date }) {
+  return (
+    <time datetime={value.toISOString()}>
+      {value.toLocaleString("cs-CZ", {
+        dateStyle: "full",
+        timeStyle: "short",
+        timeZone: "Europe/Prague",
+      })}
+    </time>
   );
 }
 

@@ -44,3 +44,23 @@ export enum RegistrationType {
   CreateCatalog = "create-catalog",
   WithdrawCatalog = "withdraw-catalog",
 }
+
+export function isWithdrawRegistrationType(type: RegistrationType): boolean {
+  return (
+    type === RegistrationType.WithdrawCatalog ||
+    type === RegistrationType.WithdrawDataset
+  );
+}
+
+export interface WithdrawItem extends RegistrationItem {
+  type: RegistrationType.WithdrawDataset | RegistrationType.WithdrawCatalog;
+
+  withdrawResource: string | null;
+}
+
+export function isWithdrawItem(what: RegistrationItem): what is WithdrawItem {
+  return (
+    what.type === RegistrationType.WithdrawDataset ||
+    what.type === RegistrationType.WithdrawCatalog
+  );
+}

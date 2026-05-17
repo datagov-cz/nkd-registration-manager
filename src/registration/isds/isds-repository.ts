@@ -3,9 +3,11 @@ import { FileSystemService } from "../../file-system";
 import { logger } from "../../application";
 import { LanguageString } from "../../rdf";
 import {
+  isWithdrawRegistrationType,
   Registration,
   RegistrationItem,
   RegistrationSource,
+  WithdrawItem,
 } from "../registration-model";
 import { parseIsdsAttachment } from "./isds-attachment";
 import { parseIsdsMessage } from "./isds-message";
@@ -151,8 +153,7 @@ class DefaultIsdsRepository implements IsdsRepository {
     } else {
       label = attachment.label;
     }
-    //
-    return {
+    const entry: RegistrationItem = {
       type: attachment.type,
       source: RegistrationSource.ISDS,
       createdAt: message.receivedAt,
@@ -161,5 +162,10 @@ class DefaultIsdsRepository implements IsdsRepository {
       attachmentPath,
       label,
     };
+    // Special handling of withdraw messages.
+    if (isWithdrawRegistrationType(entry.type)) {
+      (entry as WithdrawItem).withdrawResource = attachment.iri;
+    }
+    return entry;
   }
 }
