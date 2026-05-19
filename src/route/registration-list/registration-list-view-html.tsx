@@ -82,7 +82,7 @@ function RegistrationItemHeader({ item }: { item: MessageItem }) {
     } else {
       return (
         <span>
-          Smazání registrace <a href={item.withdrawUrl}> katalogu</a>
+          Smazání registrace katalogu {item.withdrawUrl}
         </span>
       );
     }
