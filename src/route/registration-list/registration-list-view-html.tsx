@@ -97,7 +97,7 @@ function RegistrationItemHeader({ item }: { item: MessageItem }) {
     } else {
       return (
         <span>
-          Smazání registrace <a href={item.withdrawUrl}>datové sady</a>
+          Smazání registrace datové sady {item.withdrawUrl}
         </span>
       );
     }
