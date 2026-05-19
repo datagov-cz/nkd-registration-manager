@@ -56,35 +56,56 @@ function RegistrationList({ messages }: { messages: MessageItem[] }) {
     <ul class="registrations-list">
       {messages.map((item) => (
         <li>
-          <RegistrationItem item={item} />
+          <div>
+            <RegistrationItemHeader item={item} />
+            <a href={item.detailUrl} title="Zobrazit detail záznamu">
+              <gov-icon name="attachment"></gov-icon>
+            </a>
+          </div>
+          <div>
+            Záznam vytvořen v <DateTime value={item.createdAt} />
+          </div>
         </li>
       ))}
     </ul>
   );
 }
 
-function RegistrationItem({ item }: { item: MessageItem }) {
+function RegistrationItemHeader({ item }: { item: MessageItem }) {
   if (item.type === RegistrationType.WithdrawCatalog) {
-    return (
-      <>
-        <a href={item.detailUrl}>Smazání registrace katalogu</a> <br />
-        Záznam vytvořen v <DateTime value={item.createdAt} />
-      </>
-    );
+    if (item.withdrawUrl === null) {
+      return (
+        <span>
+          Smazání registrace katalogu
+        </span>
+      );
+    } else {
+      return (
+        <span>
+          Smazání registrace <a href={item.withdrawUrl}> katalogu</a>
+        </span>
+      );
+    }
   }
   if (item.type === RegistrationType.WithdrawDataset) {
-    return (
-      <>
-        <a href={item.detailUrl}>Smazání registrace datové sady</a> <br />
-        Záznam vytvořen v <DateTime value={item.createdAt} />
-      </>
-    );
+    if (item.withdrawUrl === null) {
+      return (
+        <span>
+          Smazání registrace datové sady
+        </span>
+      );
+    } else {
+      return (
+        <span>
+          Smazání registrace <a href={item.withdrawUrl}>datové sady</a>
+        </span>
+      );
+    }
   }
   return (
-    <>
-      <a href={item.detailUrl}>{item.label}</a> <br />
-      Záznam vytvořen v <DateTime value={item.createdAt} />
-    </>
+    <span>
+      {item.label}
+    </span>
   );
 }
 
