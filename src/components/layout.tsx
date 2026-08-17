@@ -1,10 +1,16 @@
 import { VNode } from "preact";
+import { configuration } from "../application/configuration";
 
 export function Layout(props: {
   children: VNode<any> | VNode<any>[];
   language: string;
   title: string;
 }) {
+  const designSystem = configuration.govDesignSystem.url;
+  const govDsConfig = {
+    canValidateWcagOnRender: true,
+    iconsPath: `${designSystem}assets/icons`,
+  };
   return (
     <html lang={props.language}>
       <head>
@@ -16,25 +22,30 @@ export function Layout(props: {
         <title>{props.title}</title>
         <link
           rel="stylesheet"
-          href="https://data.gov.cz/assets/design-system/assets/styles/critical.css"
+          href={`${designSystem}assets/styles/critical.css`}
         />
         <link
           rel="stylesheet"
-          href="https://data.gov.cz/assets/design-system/assets/fonts/roboto.css"
+          href={`${designSystem}assets/fonts/roboto.css`}
         />
         <link
           rel="stylesheet"
-          href="https://data.gov.cz/assets/design-system/build/core.css"
+          href={`${designSystem}assets/components/core/core.css`}
         />
         <link rel="stylesheet" href="./assets/css/style.css" />
-        <script src="./assets/javascript/design-system.js" />
+        {/* We need to render the content as JavaScript which is not safe. */}
         <script
-          type="module"
-          src="https://data.gov.cz/assets/design-system/build/core.esm.js"
+          dangerouslySetInnerHTML={{
+            __html: `window.GOV_DS_CONFIG = ${JSON.stringify(govDsConfig)};`,
+          }}
         />
         <script
-          nomodule
-          src="https://data.gov.cz/assets/design-system/build/core.js"
+          type="module"
+          src={`${designSystem}assets/components/core/core.esm.js`}
+        />
+        <script
+          nomodule={true}
+          src={`${designSystem}assets/components/core/core.js`}
         />
       </head>
       <body>{props.children}</body>

@@ -102,6 +102,12 @@ const ConfigurationSchema = z.object({
      */
     sparql: z.string(),
   }),
+  govDesignSystem: z.object({
+    /**
+     * Base URL for deployment of gov-design-system.
+     */
+    url: z.url(),
+  })
 });
 
 export type Configuration = z.infer<typeof ConfigurationSchema>;
@@ -137,6 +143,9 @@ const createConfiguration = (): Configuration => {
     },
     rpp: {
       sparql: "https://rpp-opendata.egon.gov.cz/odrpp/sparql",
+    },
+    govDesignSystem: {
+      url: env.GOV_DESIGN_SYSTEM_BASE,
     },
   });
 };
