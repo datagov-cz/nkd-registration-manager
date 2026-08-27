@@ -13,28 +13,26 @@ export function renderRegistrationListGetViewHtml(
   return renderToHtml(<RegistrationListGetViewHtml state={state} />);
 }
 
-function RegistrationListGetViewHtml({
-  state,
-}: {
-  state: RegistrationListGetState;
-}) {
+function RegistrationListGetViewHtml(
+  { state }: { state: RegistrationListGetState }
+) {
   return (
     <Layout language="cs" title="Přehled registrací">
       <header class="gov-header">
-        <gov-container>
-          <HeaderBranding state={state.branding} />
-          <HeaderNavigation state={state.navigation} />
-        </gov-container>
+        <HeaderBranding state={state.branding} />
+        <HeaderNavigation state={state.navigation} />
       </header>
       <gov-container>
         <h2>Přehled registračních záznamů</h2>
         {state.messages.length === 0 && state.pagination.currentPage === 1 ? (
           <EmptyRegistrationList state={state} />
         ) : (
-          <>
-            <RegistrationList messages={state.messages} />
-            <Pagination pagination={state.pagination} />
-          </>
+          <section aria-label="Výpis registrovaných záznamů">
+            <gov-flex direction="column" gap="xl" response="true">
+              <RegistrationList messages={state.messages} />
+              <Pagination pagination={state.pagination} />
+            </gov-flex>
+          </section>
         )}
       </gov-container>
     </Layout>
@@ -43,73 +41,70 @@ function RegistrationListGetViewHtml({
 
 function EmptyRegistrationList({ state }: { state: RegistrationListGetState }) {
   return (
-    <p>
-      Pro vaší organizaci nejsou k dispozici žádné registrační zprávy.
-      Registrační záznam můžete přidat přes
-      <a href={state.createRegistrationUrl}>vložení registračního záznamu</a>.
-    </p>
+    <gov-empty align="left" size="m">
+      <gov-icon type="colored" name="empty-file" slot="icon"></gov-icon>
+      <p slot="headline">Pro vaší organizaci nejsou k dispozici žádné registrační zprávy.</p>
+      <p>
+        Registrační záznam můžete přidat přes
+        <gov-button type="link" href={state.createRegistrationUrl}>
+          vložení registračního záznamu
+        </gov-button>.
+      </p>
+    </gov-empty>
   );
 }
 
 function RegistrationList({ messages }: { messages: MessageItem[] }) {
   return (
-    <ul class="registrations-list">
-      {messages.map((item) => (
-        <li>
-          <div>
-            <RegistrationItemHeader item={item} />
-            <a href={item.detailUrl} title="Zobrazit detail záznamu">
-              <gov-icon name="attachment"></gov-icon>
-            </a>
-          </div>
-          <div>
-            Záznam vytvořen v <DateTime value={item.createdAt} />
-          </div>
-        </li>
+    <gov-grid gap="l" className="gov-card-grid" role="list">
+      {messages.map((item, index) => (
+        <gov-grid-item col-span="12" role="listitem">
+          <article>
+            <gov-card direction="horizontal" aria-labelledby={"card-" + index}>
+              <gov-flex justify-content="space-between" align-items="center">
+                <gov-flex gap="s" direction="column">
+                  <header>
+                    <h3 id={"card-" + index} class="gov-card__headline">
+                      <RegistrationItemTitle item={item} />
+                    </h3>
+                  </header>
+                  <gov-flex gap="s" align-items="center" responsive="false">
+                    <gov-icon type="complex" name="time" color="default" size="m" aria-label="Datum vytvoření záznamu"></gov-icon>
+                    <Time value={item.createdAt} />
+                  </gov-flex>
+                </gov-flex>
+                <a href={item.detailUrl} title="Zobrazit detail záznamu">
+                  <gov-icon name="file-earmark" size="2xl"></gov-icon>
+                </a>
+              </gov-flex>
+            </gov-card>
+          </article>
+        </gov-grid-item>
       ))}
-    </ul>
+    </gov-grid>
+
   );
 }
 
-function RegistrationItemHeader({ item }: { item: MessageItem }) {
+function RegistrationItemTitle({ item }: { item: MessageItem }) {
   if (item.type === RegistrationType.WithdrawCatalog) {
     if (item.withdrawUrl === null) {
-      return (
-        <span>
-          Smazání registrace katalogu
-        </span>
-      );
+      return "Smazání registrace katalogu";
     } else {
-      return (
-        <span>
-          Smazání registrace katalogu {item.withdrawUrl}
-        </span>
-      );
+      return `Smazání registrace katalogu ${item.withdrawUrl}`;
     }
   }
   if (item.type === RegistrationType.WithdrawDataset) {
     if (item.withdrawUrl === null) {
-      return (
-        <span>
-          Smazání registrace datové sady
-        </span>
-      );
+      return "Smazání registrace datové sady";
     } else {
-      return (
-        <span>
-          Smazání registrace datové sady {item.withdrawUrl}
-        </span>
-      );
+      return `Smazání registrace datové sady ${item.withdrawUrl}`;
     }
   }
-  return (
-    <span>
-      {item.label}
-    </span>
-  );
+  return item.label;
 }
 
-function DateTime({ value }: { value: Date }) {
+function Time({ value }: { value: Date }) {
   return (
     <time datetime={value.toISOString()}>
       {value.toLocaleString("cs-CZ", {
@@ -126,15 +121,13 @@ function Pagination({ pagination }: { pagination: PaginationState }) {
     return null;
   }
   return (
-    <nav aria-label="Stránkování">
+    <gov-flex justify-content="center">
       <gov-pagination
         total={String(pagination.totalRecords)}
         current={String(pagination.currentPage)}
         page-size={pagination.pageSize}
-        wcag-label="Stránkování pro registrační záznamy"
-        wcag-select-label="Vybrat stránku"
         link="?str%C3%A1nka&#x3D;{PAGE}"
-      ></gov-pagination>
-    </nav>
+      />
+    </gov-flex>
   );
 }

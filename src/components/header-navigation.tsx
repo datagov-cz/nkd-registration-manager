@@ -1,29 +1,39 @@
 import { RouteService } from "../route";
 
+/**
+ * This is separated from header as we do not render it for every route.
+ */
 export function HeaderNavigation({ state }: { state: HeaderNavigationState }) {
   return (
-    <gov-nav wcag-label="Hlavní navigace">
-      <gov-nav-item
-        href={state.createRegistrationUrl}
-        className={active(state.createRegistrationActive)}
+    <div class="gov-header__navigation js-gov-header__navigation">
+      <nav
+        class="gov-navigation"
+        aria-label="Hlavní navigace"
+        id="main-navigation"
       >
-        Vložení registračního záznamu
-      </gov-nav-item>
-      <gov-nav-item
-        href={state.listRegistrationUrl}
-        className={active(state.listRegistrationActive)}
-      >
-        Přehled registračních záznamů
-      </gov-nav-item>
-    </gov-nav>
+        <ul>
+          <li
+            className={
+              state.createRegistrationActive ? "navigation-item-active" : ""
+            }
+          >
+            <a href={state.createRegistrationUrl}>
+              Vložení registračního záznamu
+            </a>
+          </li>
+          <li
+            className={
+              state.listRegistrationActive ? "navigation-item-active" : ""
+            }
+          >
+            <a href={state.listRegistrationUrl}>
+              Přehled registračních záznamů
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
   );
-}
-
-function active(value?: boolean): string {
-  if (value === true) {
-    return "active";
-  }
-  return "";
 }
 
 export interface HeaderNavigationState {

@@ -107,7 +107,7 @@ const ConfigurationSchema = z.object({
      * Base URL for deployment of gov-design-system.
      */
     url: z.url(),
-  })
+  }),
 });
 
 export type Configuration = z.infer<typeof ConfigurationSchema>;

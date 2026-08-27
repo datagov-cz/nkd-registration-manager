@@ -1,35 +1,8 @@
-h1, h2, h3, h4, h5, h6 {
-    margin-top: 1rem;
-    margin-bottom: .75rem;
-    word-wrap: break-word;
+
+.ml-4 {
+  margin-left: 1rem !important;
 }
 
-.registrations-list li {
-    padding-bottom: 1em;
-}
-
-.registration-detail {
-    word-break: break-all;
-}
-
-/*  */
-
-.flex  {
-    display: flex;
-}
-
-.justify-around {
-    justify-content: space-around;
-}
-
-.justify-end {
-    justify-content: flex-end;
-}
-
-.flex-col {
-    flex-direction: column;
-}
-
-.pt-4 {
-    padding-top: 1rem
+.navigation-item-active {
+  border-top: 0.15rem solid var(--text-primary-color);
 }

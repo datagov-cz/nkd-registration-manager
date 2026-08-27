@@ -16,47 +16,44 @@ function CreateRegistrationGetViewHtml({
   return (
     <Layout language="cs" title="Vložení registračního záznamu">
       <header class="gov-header">
-        <gov-container>
-          <HeaderBranding state={state.branding} />
-          <HeaderNavigation state={state.navigation} />
-        </gov-container>
+        <HeaderBranding state={state.branding} />
+        <HeaderNavigation state={state.navigation} />
       </header>
       <gov-container>
         <h2>Vložení nového registračního záznamu</h2>
-        <div class="flex flex-col" style="gap: 1.0em;">
-          <p>
-            Zde můžete vkládat registrační záznamy do NKOD místo jejich zasílání
-            přes datovou schránku. Zbytek funkcionality pro správu záznamů
-            zůstává stejný. Změny se projeví v NKOD po jeho pravidelném
-            zpracování, které typicky probíhá v nočních hodinách.
-          </p>
-        </div>
-        <gov-tiles columns="2">
-          <gov-tile href={state.datasetRegistrationUrl}>
-            <h3 slot="title">Registrace nové datové sady formulářem</h3>
-            <p>
-              Otevře formulář pro vyplnění záznamu pro registraci nové datové
-              sady. Po jeho dokončení je záznam zaevidován.
-            </p>
-          </gov-tile>
-          <gov-tile href={state.catalogRegistrationUrl}>
-            <h3 slot="title">
-              Registrace nového lokálního katalogu formulářem
-            </h3>
-            <p>
-              Otevře formulář pro vyplnění záznamu pro registraci nového
-              lokálního katalogu. Po jeho dokončení je záznam zaevidován.
-            </p>
-          </gov-tile>
-        </gov-tiles>
+        <p>
+          Zde můžete vkládat registrační záznamy do NKOD místo jejich zasílání
+          přes datovou schránku. Zbytek funkcionality pro správu záznamů zůstává
+          stejný. Změny se projeví v NKOD po jeho pravidelném zpracování, které
+          typicky probíhá v nočních hodinách.
+        </p>
         <br />
-        <hr />
+        <gov-grid gap="l" class="gov-card-grid">
+          <gov-grid-item col-span="12" col-span-md="6">
+            <gov-tile href={state.datasetRegistrationUrl}>
+              <h3 slot="title">Registrace nové datové sady formulářem</h3>
+              <p>
+                Otevře formulář pro vyplnění záznamu pro registraci nové datové
+                sady. Po jeho dokončení je záznam zaevidován.
+              </p>
+            </gov-tile>
+          </gov-grid-item>
+          <gov-grid-item col-span="12" col-span-md="6">
+            <gov-tile href={state.catalogRegistrationUrl}>
+              <h3 slot="title">
+                Registrace nového lokálního katalogu formulářem
+              </h3>
+              <p>
+                Otevře formulář pro vyplnění záznamu pro registraci nového
+                lokálního katalogu. Po jeho dokončení je záznam zaevidován.
+              </p>
+            </gov-tile>
+          </gov-grid-item>
+        </gov-grid>
         <br />
-        <section style="padding: 0 1.5rem 1.5rem 1.5rem">
+        <section>
           <div>
-            <span class="gov-tile__title">
-              <h3 slot="title">Registrační záznam ze souboru</h3>
-            </span>
+            <h3>Registrační záznam ze souboru</h3>
             <div>
               <p>
                 Záznamy lze vkládat i ze souborů. Soubory získáte vyplněním
@@ -64,41 +61,46 @@ function CreateRegistrationGetViewHtml({
                 katalogu. Lze použít i pro nahrání ručně připravených záznamů
                 pro novou datovou sadu či katalog.
               </p>
+              <br />
               <form
                 method="post"
                 action={state.registrationUploadUrl}
                 enctype="multipart/form-data"
               >
                 <gov-form-control>
-                  <gov-form-label size="s" slot="top">
+                  <gov-form-label slot="top">
                     Nahrát registrační záznam
                   </gov-form-label>
                   <gov-form-group>
                     <gov-form-file
-                      accept="text/plain,.jsonld,.json"
+                      accept=".txt,.jsonld,.json"
                       name="file"
-                      multiple
+                      max-file-size="262144"
                       required
                       expanded
                     >
-                      <p>Přetáhněte soubor nebo</p>
+                      <span>Přetáhněte soubor nebo</span>
                       <p>
-                        <gov-button variant="primary" type="outlined">
-                          Nahrajte ze zařízení
+                        <gov-button color="primary" size="m" type="outlined">
+                          Nahrát ze zařízení
                         </gov-button>
                       </p>
+                      <span class="gov-form-file__note">
+                        Podporovaný formát JSON-LD
+                      </span>
                     </gov-form-file>
                   </gov-form-group>
                 </gov-form-control>
-                <div class="flex justify-end pt-4">
+                <br />
+                <gov-flex justify-content="flex-end">
                   <gov-button
-                    variant="primary"
+                    color="primary"
                     type="outlined"
                     native-type="submit"
                   >
                     Vložit záznam
                   </gov-button>
-                </div>
+                </gov-flex>
               </form>
             </div>
           </div>

@@ -20,35 +20,51 @@ export function Layout(props: {
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
         <title>{props.title}</title>
-        <link
-          rel="stylesheet"
-          href={`${designSystem}assets/styles/critical.css`}
-        />
-        <link
-          rel="stylesheet"
-          href={`${designSystem}assets/fonts/roboto.css`}
-        />
-        <link
-          rel="stylesheet"
-          href={`${designSystem}assets/components/core/core.css`}
-        />
-        <link rel="stylesheet" href="./assets/css/style.css" />
+        {/* Design system. */}
         {/* We need to render the content as JavaScript which is not safe. */}
         <script
           dangerouslySetInnerHTML={{
             __html: `window.GOV_DS_CONFIG = ${JSON.stringify(govDsConfig)};`,
           }}
         />
+        <link
+          rel="stylesheet"
+          href={designSystem + "/assets/styles/tokens.css"}
+        />
+        <link
+          rel="stylesheet"
+          href={designSystem + "/assets/styles/styles.css"}
+        />
+        <link
+          rel="stylesheet"
+          href={designSystem + "/assets/styles/layout.css"}
+        />
+        <link
+          rel="stylesheet"
+          href={designSystem + "/assets/styles/components.css"}
+        />
+        <link
+          rel="stylesheet"
+          href={designSystem + "/assets/styles/animations.css"}
+        />
+        <link
+          rel="stylesheet"
+          href={designSystem + "/assets/styles/content.css"}
+        />
+        <link
+          rel="stylesheet"
+          href={designSystem + "/assets/styles/templates.css"}
+        />
         <script
           type="module"
-          src={`${designSystem}assets/components/core/core.esm.js`}
-        />
-        <script
-          nomodule={true}
-          src={`${designSystem}assets/components/core/core.js`}
-        />
+          src={designSystem + "/assets/components/core/core.esm.js"}
+        ></script>
+        {/* Custom styles. */}
+        <link rel="stylesheet" href="./assets/css/style.css" />
       </head>
-      <body>{props.children}</body>
+      <body>
+        <div class="gov-story-theme-scope">{props.children}</div>
+      </body>
     </html>
   );
 }

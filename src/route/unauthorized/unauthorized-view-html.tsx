@@ -10,9 +10,7 @@ function UnauthorizedViewHtml({ state }: { state: UnauthorizedState }) {
   return (
     <Layout language="cs" title="Nedostatečné oprávnění">
       <header class="gov-header">
-        <gov-container>
-          <HeaderBranding state={state.branding} />
-        </gov-container>
+        <HeaderBranding state={state.branding} />
       </header>
       <gov-container>
         <h2>Nedostatečné oprávnění</h2>

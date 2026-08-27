@@ -16,10 +16,8 @@ function RegistrationDetailGetViewHtml({
   return (
     <Layout language="cs" title="Detail registrace">
       <header class="gov-header">
-        <gov-container>
-          <HeaderBranding state={state.branding} />
-          <HeaderNavigation state={state.navigation} />
-        </gov-container>
+        <HeaderBranding state={state.branding} />
+        <HeaderNavigation state={state.navigation} />
       </header>
       <gov-container>
         <h2>Detail registračního záznamu</h2>
