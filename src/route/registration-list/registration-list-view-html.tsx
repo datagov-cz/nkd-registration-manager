@@ -13,9 +13,11 @@ export function renderRegistrationListGetViewHtml(
   return renderToHtml(<RegistrationListGetViewHtml state={state} />);
 }
 
-function RegistrationListGetViewHtml(
-  { state }: { state: RegistrationListGetState }
-) {
+function RegistrationListGetViewHtml({
+  state,
+}: {
+  state: RegistrationListGetState;
+}) {
   return (
     <Layout language="cs" title="Přehled registrací">
       <header class="gov-header">
@@ -43,12 +45,15 @@ function EmptyRegistrationList({ state }: { state: RegistrationListGetState }) {
   return (
     <gov-empty align="left" size="m">
       <gov-icon type="colored" name="empty-file" slot="icon"></gov-icon>
-      <p slot="headline">Pro vaší organizaci nejsou k dispozici žádné registrační zprávy.</p>
+      <p slot="headline">
+        Pro vaší organizaci nejsou k dispozici žádné registrační zprávy.
+      </p>
       <p>
         Registrační záznam můžete přidat přes
         <gov-button type="link" href={state.createRegistrationUrl}>
           vložení registračního záznamu
-        </gov-button>.
+        </gov-button>
+        .
       </p>
     </gov-empty>
   );
@@ -69,7 +74,13 @@ function RegistrationList({ messages }: { messages: MessageItem[] }) {
                     </h3>
                   </header>
                   <gov-flex gap="s" align-items="center" responsive="false">
-                    <gov-icon type="complex" name="time" color="default" size="m" aria-label="Datum vytvoření záznamu"></gov-icon>
+                    <gov-icon
+                      type="complex"
+                      name="time"
+                      color="default"
+                      size="m"
+                      aria-label="Datum vytvoření záznamu"
+                    ></gov-icon>
                     <Time value={item.createdAt} />
                   </gov-flex>
                 </gov-flex>
@@ -82,7 +93,6 @@ function RegistrationList({ messages }: { messages: MessageItem[] }) {
         </gov-grid-item>
       ))}
     </gov-grid>
-
   );
 }
 
